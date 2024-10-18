@@ -1,15 +1,17 @@
 import logging
 
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.views.generic import TemplateView, DetailView, ListView, CreateView, UpdateView, DeleteView, FormView, View
-from viewer.models import Television, MobilePhone, ItemsOnStock,  Order, Profile
+from viewer.models import Television, MobilePhone, ItemsOnStock, Order, Profile, Brand, TVDisplayTechnology
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth import login
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from viewer.forms import (TVForm, CustomAuthenticationForm, CustomPasswordChangeForm, ProfileForm, SignUpForm,
-                          OrderForm, BrandForm, ItemOnStockForm)
+                          OrderForm, BrandForm, ItemOnStockForm, TVDisplayTechnologyForm, TVDisplayResolutionForm,
+                          TVOperationSystemForm, BrandDeleteForm, TVDisplayTechnologyDeleteForm,
+                          TVDisplayResolutionDeleteForm, TVOperationSystemDeleteForm)
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib import messages
@@ -55,8 +57,8 @@ class SearchResultsView(ListView):
         if query:
             return Television.objects.filter(
                 Q(brand__brand_name__icontains=query) |  # Vyhledávání podle Brand name
-                Q(display_technology__name__icontains=query) | # Vyhledávání podle Display technology
-                Q(brand_model__icontains=query) # Vyhledávání podle Brand model
+                Q(display_technology__name__icontains=query) |  # Vyhledávání podle Display technology
+                Q(brand_model__icontains=query)  # Vyhledávání podle Brand model
             )
         return Television.objects.none()  # Vrací prázdný queryset pokud není žádný k dispozici
 
@@ -73,6 +75,112 @@ class BrandCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def form_invalid(self, form):
         logger.warning('User provided invalid data.')
         return super().form_invalid(form)
+
+
+class TVDisplayTechnologyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    template_name = 'television/technology_create.html'
+    form_class = TVDisplayTechnologyForm
+    success_url = reverse_lazy('tv_create')
+
+    def test_func(self):
+        # Umožní přístup pouze členům skupiny 'tv_admin' nebo superuživatelům
+        return self.request.user.is_superuser or self.request.user.groups.filter(name='tv_admin').exists()
+
+    def form_invalid(self, form):
+        logger.warning('User provided invalid data.')
+        return super().form_invalid(form)
+
+
+class DisplayResolutionCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    template_name = 'television/resolution_create.html'
+    form_class = TVDisplayResolutionForm
+    success_url = reverse_lazy('tv_create')
+
+    def test_func(self):
+        # Umožní přístup pouze členům skupiny 'tv_admin' nebo superuživatelům
+        return self.request.user.is_superuser or self.request.user.groups.filter(name='tv_admin').exists()
+
+    def form_invalid(self, form):
+        logger.warning('User provided invalid data.')
+        return super().form_invalid(form)
+
+
+class OperationSystemCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    template_name = 'television/system_create.html'
+    form_class = TVOperationSystemForm
+    success_url = reverse_lazy('tv_create')
+
+    def test_func(self):
+        # Umožní přístup pouze členům skupiny 'tv_admin' nebo superuživatelům
+        return self.request.user.is_superuser or self.request.user.groups.filter(name='tv_admin').exists()
+
+    def form_invalid(self, form):
+        logger.warning('User provided invalid data.')
+        return super().form_invalid(form)
+
+
+class BrandDeleteView(View):
+    template_name = 'television/brand_delete.html'
+
+    def get(self, request, *args, **kwargs):
+        form = BrandDeleteForm()  # Instantiate the form
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = BrandDeleteForm(request.POST)
+        if form.is_valid():
+            brand = form.cleaned_data['brand']
+            brand.delete()  # Delete the selected brand
+            return redirect('tv_create')
+        return render(request, self.template_name, {'form': form})
+
+
+class TVDisplayTechnologyDeleteView(View):
+    template_name = 'television/technology_delete.html'
+
+    def get(self, request, *args, **kwargs):
+        form = TVDisplayTechnologyDeleteForm()  # Instantiate the form
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = TVDisplayTechnologyDeleteForm(request.POST)
+        if form.is_valid():
+            display_technology = form.cleaned_data['display_technology']
+            display_technology.delete()  # Delete the selected brand
+            return redirect('tv_create')
+        return render(request, self.template_name, {'form': form})
+
+
+class TVDisplayResolutionDeleteView(View):
+    template_name = 'television/resolution_delete.html'
+
+    def get(self, request, *args, **kwargs):
+        form = TVDisplayResolutionDeleteForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = TVDisplayResolutionDeleteForm(request.POST)
+        if form.is_valid():
+            display_resolution = form.cleaned_data['display_resolution']
+            display_resolution.delete()  # Delete the selected brand
+            return redirect('tv_create')
+        return render(request, self.template_name, {'form': form})
+
+
+class TVOperationSystemDeleteView(View):
+    template_name = 'television/system_delete.html'
+
+    def get(self, request, *args, **kwargs):
+        form = TVOperationSystemDeleteForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = TVOperationSystemDeleteForm(request.POST)
+        if form.is_valid():
+            tv_system = form.cleaned_data['tv_system']
+            tv_system.delete()  # Delete the selected brand
+            return redirect('tv_create')
+        return render(request, self.template_name, {'form': form})
 
 
 class TVListView(ListView):
@@ -258,6 +366,7 @@ class ItemOnStockDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
     def test_func(self):
         return self.request.user.is_superuser or self.request.user.groups.filter(name='stock_admin').exists()
 
+
 @login_required
 def edit_profile(request):
     profile = Profile.objects.get(user=request.user)
@@ -379,6 +488,7 @@ class CheckoutView(LoginRequiredMixin, FormView):
     form_class = OrderForm
 
     """Přesměrování, pokud je košík prázdný"""
+
     def dispatch(self, request, *args, **kwargs):
         cart = self.request.session.get('cart', {})
         if not cart:
@@ -386,12 +496,14 @@ class CheckoutView(LoginRequiredMixin, FormView):
         return super().dispatch(request, *args, **kwargs)
 
     """Úspěšné přesměrování po odeslání formuláře"""
+
     def get_success_url(self):
         return reverse('order_success', kwargs={'order_id': self.order.order_id})
 
     """
     Inicializace formuláře s údaji uživatele
     """
+
     def get_initial(self):
         initial = super().get_initial()
         user = self.request.user
@@ -403,7 +515,7 @@ class CheckoutView(LoginRequiredMixin, FormView):
             'city': user.profile.city if hasattr(user, 'profile') else '',
             'zipcode': user.profile.zipcode if hasattr(user, 'profile') else '',
             'phone_number': user.profile.phone_number if hasattr(user, 'profile') else '',
-            })
+        })
         return initial
 
     """Předání uživatele do formuláře při jeho inicializaci"""
