@@ -245,6 +245,7 @@ class ProfileForm(forms.ModelForm):
         }
 
     date_of_birth = forms.DateField(
+        required=False,
         input_formats=['%Y-%m-%d'],  # Zbezpeci, aby byl pouzit spravny format
-        widget=forms.DateInput(attrs={'type': 'date'})  # Customize the widget
+        widget=forms.DateInput(attrs={'type': 'date'})
     )
