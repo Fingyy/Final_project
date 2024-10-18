@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Seznam položek na skladě</h2>
+    <ol>
+        {% for item in items %}
+            <li>
+                <div>{{ item.television_id  }} - {{ item.quantity }} KS </div>
+                <a href="{% url 'tv_detail' item.television_id.pk  %}" class="btn btn-info">Detail</a>
+                <a href="{% url 'item_on_stock_update' item.pk %}" class="btn btn-warning">Edit</a>
+                <a href="{% url 'item_on_stock_delete' item.pk  %}" class="btn btn-danger">Smazat</a>
+            </li>
+        {% endfor %}
+    </ol>
+    <a href="{% url 'item_on_stock_create' %}" class="btn btn-success">Přidat položku</a>
+{% endblock %}

@@ -10,10 +10,37 @@
         font-weight: bold;
         text-align: center;
     }
-
     .flag-color-green {
         background-color: green;
     }
+    .flag-blue {
+        display: inline-block;
+        padding: 10px 15px;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        background-color: blue;
+    }
+    .flag-yellow {
+        display: inline-block;
+        padding: 10px 15px;
+        color: black;
+        font-weight: bold;
+        text-align: center;
+        background-color: yellow;
+    }
+    .flag-red {
+        display: inline-block;
+        padding: 10px 15px;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        background-color: red;
+    }
+    .error-messages {
+        color: red;
+    }
+    
 </style>
 
     <a href="{% url 'tv_list' %}">< Back to TV list</a>
@@ -34,7 +61,9 @@
             <p>Technologie: {{ television.display_technology }}</p>
             <p>Rozlišení displeje: {{ television.display_resolution }}</p>
             <p>Operační systém: {{ television.operation_system }}</p>
-            <a href="{% url 'add_to_cart' television.pk %}" class="btn btn-success">Do košíku</a>
+            {% if user.is_authenticated and item_on_stock.quantity > 0 %}
+                <a href="{% url 'add_to_cart' television.pk %}" class="btn btn-success">Do košíku</a>
+            {% endif %}
             {% if user.is_authenticated and user.is_superuser %}
                 <a href="{% url 'tv_update' television.pk %}" class="btn btn-warning">Edit</a>
                 <a href="{% url 'tv_delete' television.pk %}" class="btn btn-danger">Delete</a>
@@ -43,10 +72,10 @@
                 <a href="{% url 'tv_delete' television.pk %}" class="btn btn-danger">Delete</a>
             {% endif %}
         </div>
-        <!-- Pravá část s popisem televize -->
+        <!-- Prava cast s popisem televize -->
         <div class="tv-description" style="width: 70%; padding-left: 20px;">
             <div class="tv-info" style="display: flex; align-items: center;">
-    <!-- Obrázek -->
+    <!-- Obrazek -->
     <div class="tv-image" style="flex-shrink: 0; padding-right: 20px;">
         {% if television.image %}
             <img src="{{ television.image.url }}" alt="missing picture of {{ television.brand }} {{ television.brand_model }}" width="350" height="350">
@@ -59,6 +88,14 @@
     
     <!-- Cena  -->
     <div class="tv-price">
+        {% if messages %}
+            <div class="error-messages">
+                {% for message in messages %}
+                    <h3{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</h3>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <!-- Doprava zdarma za splnění podmínky výrobce  -->
         {% if television.brand.brand_name == "Panasonic" %}
         <div class="product-flags">
@@ -66,6 +103,15 @@
         </div>
         {% endif %}
         <h3>{{ television.price|floatformat:0 }},- Kč</h3>
+        <div>
+            {% if item_on_stock.quantity > 9 %}
+                <div class="flag-blue">Ihned k odeslání</div>
+            {% elif item_on_stock.quantity < 10 and item_on_stock.quantity > 0 %}
+                <div class="flag-yellow">Méně jak 10 ks</div>
+            {% else %}
+                <div class="flag-red">Momentálně není skladem</div>
+            {% endif %}
+        </div>
         
     </div>
 </div>

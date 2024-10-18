@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Výsledky hledání</h2>
+
+{% if search_results %}
+    <ul>
+        {% for item in search_results %}
+            <li>
+                <a href="{% url 'tv_detail' item.pk %}">{{ item.brand }} {{ item.brand_model }} -
+                   {{ item.display_technology }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Nic nenalezeno.</p>
+{% endif %}
+{% endblock %}

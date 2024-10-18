@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="row mb-3">
+      <label for="{{ form.television_id.id_for_label }}" class="col-sm-2 col-form-label">Product:</label>
+      <div class="col-sm-10">
+        {{ form.television_id.errors }}
+        {{ form.television_id }}
+      </div>
+        
+    </div>
+
+    <div class="row mb-3">
+      <label for="{{ form.quantity.id_for_label }}" class="col-sm-2 col-form-label">Model:</label>
+      <div class="col-sm-10">
+        {{ form.quantity.errors }}
+        {{ form.quantity }}
+      </div>
+    </div>
+      <input type="submit" value="Submit" class="btn btn-primary">
+        </form>
+{% endblock %}

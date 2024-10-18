@@ -4,7 +4,7 @@
   <form method="post">
     {% csrf_token %} 
     <p>
-      Are you sure you want to delete {{ television.brand_name }} -  {{ television.brand_model}} from database?
+      Are you sure you want to delete {{ television.brand_name }} -  {{ television.brand_model }} from database?
     </p> 
     <input type="submit" value="Submit" class="btn btn-danger">
     <a href="{% url 'tv_detail' television.pk %}" class="btn btn-warning">Back</a>

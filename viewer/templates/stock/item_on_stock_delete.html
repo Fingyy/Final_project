@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <form method="post">
+    {% csrf_token %} 
+    <p>
+      Jste si jistí, že chce smazat {{ itemsonstock.television_id }} - v počtu {{ itemsonstock.quantity }} ks z databáze skladu?
+    </p> 
+    <input type="submit" value="Potvrditt" class="btn btn-danger">
+    <a href="{% url 'stock_list' %}" class="btn btn-warning">Zpet</a>
+  </form> 
+{% endblock %}

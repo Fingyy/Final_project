@@ -6,9 +6,7 @@
         <div class="mb-4"></div>
         <form method="POST">
             {% csrf_token %}
-            {{ form.as_p }}  <!-- This renders the form fields automatically -->
-            <label for="date_of_birth">Datum narození:</label>
-            <input type="date" id="date_of_birth" name="date_of_birth" value="{{ user.profile.date_of_birth|date:'Y-m-d' }}">
+            {{ form.as_p }}  <!-- Renders the form fields automatically -->
             <div class="mb-4"></div>
             <button type="submit" class="btn btn-success">Uložit změny</button>
         </form>

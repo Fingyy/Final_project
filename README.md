@@ -17,11 +17,11 @@ Náš finální projekt se zaměřuje na eshop s elektronikou.
 - [x] Přidat tlačítka k produktu a funkce k nim (Add, Edit, Delete)
 - [x] Vytvořit admina
 - [x] Vytvořit uživatele
-- [ ] Přidat další kategorie
-- [ ] Přidat další produkty
-- [ ] Vytvořit strom kategorií
-- [ ] Rozšířit uživatelský účet
-- [ ] Definovat oprávnění admin/uživatel 
+- [x] Přidat další kategorie
+- [x] Přidat další produkty
+- [x] Vytvořit strom kategorií
+- [x] Rozšířit uživatelský účet
+- [x] Definovat oprávnění admin/uživatel 
       
 ### Dodatečné úlohy
 - [ ] Vytvořit testy
