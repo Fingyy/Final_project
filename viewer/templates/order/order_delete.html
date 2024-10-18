@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <form method="post">
+    {% csrf_token %} 
+    <p>
+      Jste si jistý, že chcete smazat "{{ order.order_id }}" z databáze?
+    </p> 
+    <input type="submit" value="Potvrdit" class="btn btn-danger">
+    <a href="{% url 'order_detail' order.order_id %}" class="btn btn-warning">Zpět</a>
+  </form> 
+{% endblock %}

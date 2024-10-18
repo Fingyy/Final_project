@@ -7,9 +7,12 @@
         {% for order in orders %}
             <li>
                 <div>ID objednávky: "<a href="{% url 'order_detail' order_id=order.order_id %}">{{ order.order_id }}</a>"</div>
-                <div>Datum: {{ order.order_date  }}</div>
+                <div>Datum: {{ order.order_date }}</div>
                 <div>{{ cart.total_price }}</div>
-                <div>Status: {{ order.status  }}</div>
+                <div>Status: {{ order.status }}</div>
+                {% if user.is_superuser or is_tv_admin %}
+                    <div>Vlastník obejdnávky: {{ order.user }}</div>
+                {% endif %}
             </li>
         {% endfor %}
     </ol>

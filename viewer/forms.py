@@ -155,10 +155,6 @@ class OrderForm(forms.ModelForm):
             self.fields['zipcode'].initial = profile.zipcode
             self.fields['phone_number'].initial = profile.phone_number
 
-    # def clean(self):
-    #    if not self.television.exists():
-    #        raise ValidationError('V objednavce musi byt alespon televize nebo mobil')
-
     def save(self, commit=True):
         order = super(OrderForm, self).save(commit=False)
         if self.cleaned_data['use_profile_data']:

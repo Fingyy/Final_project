@@ -18,7 +18,7 @@ from django.urls import path
 
 from viewer.views import (BaseView, TVDetailView, TVListView, TVCreateView, TVUpdateView, TVDeleteView,
                           FilteredTelevisionListView, ProfileView, SubmittableLoginView, CustomLogoutView,
-                          SubmittablePasswordChangeView, MobileListView, CreateOrderView, OrderSuccessView,
+                          SubmittablePasswordChangeView, MobileListView, OrderSuccessView, OrderDeleteView,
                           OrderListView, OrderDetailView, AddToCartView, RemoveFromCartView, CartView, CheckoutView,
                           edit_profile, signup, BrandCreateView, SearchResultsView, ItemOnStockListView,
                           ItemOnStockCreateView, ItemOnStockUpdateView, ItemOnStockDeleteView)
@@ -70,10 +70,10 @@ urlpatterns = [
     path('cart/remove/<int:television_id>/', RemoveFromCartView.as_view(), name='remove_from_cart'),
     path('cart/', CartView.as_view(), name='view_cart'),
     path('checkout/', CheckoutView.as_view(), name='checkout'),
-    path('order/create/<int:television_id>/', CreateOrderView.as_view(), name='create_order'),
     path('order/success/<uuid:order_id>/', OrderSuccessView.as_view(), name='order_success'),
     path('orders/', OrderListView.as_view(), name='order_list'),
     path('order/<uuid:order_id>/', OrderDetailView.as_view(), name='order_detail'),
+    path('order/delete/<uuid:order_id>/', OrderDeleteView.as_view(), name='order_delete'),
 
 ]
 
