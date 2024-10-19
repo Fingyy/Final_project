@@ -155,7 +155,7 @@ class Profile(models.Model):
     )
 
     zipcode_validator = RegexValidator(
-        regex=r'^\d{5}$',  # Regex for exactly 5 digits
+        regex=r'^\d{5}$',  # Vyžaduje právě 5 číslic
         message='PSČ musí mít 5 číslic',
         code='invalid_zipcode'
     )
