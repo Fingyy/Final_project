@@ -150,8 +150,8 @@ class Profile(models.Model):
     ]
 
     alpha_validator = RegexValidator(
-        regex=r'^[a-zA-Z]+$',  # Povoluje pouze písmena
-        message='Povoleny jsou pouze znaky a-z nebo A-Z.'
+        regex=r'^[^\W\d_]+$',  # Povoluje pouze písmena
+        message='Povolena jsou pouze písmena.'
     )
 
     zipcode_validator = RegexValidator(
@@ -173,7 +173,7 @@ class Profile(models.Model):
         max_length=14,
         validators=[
             RegexValidator(regex=r'^\+?\d{9,}$',  # Volitelné "+" na začátku a vyžaduje alespoň 9 znaku,
-                           message='Nesprávný formát čísla. Povolené jsou pouze číslice a volitelně "+" na začátku.'),
+                           message='Nesprávný formát čísla.'),
         ],
         blank=True
     )
@@ -181,7 +181,7 @@ class Profile(models.Model):
     address = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=25, blank=True, validators=[alpha_validator])
     zipcode = models.CharField(max_length=5, blank=True, validators=[zipcode_validator])
-    avatar = models.ImageField(upload_to='avatars/', default='avatars/profile_pic.png', blank=True, null=True)
+    avatar = models.ImageField(upload_to='avatars/', default='media/avatars/profile_pic.png', blank=True, null=True)
     communication_channel = models.CharField(max_length=10, choices=communication_channel_choices, default='Email')
 
     @property
