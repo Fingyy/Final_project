@@ -3,6 +3,7 @@ import re
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from viewer.models import Profile, Television, MobilePhone, Order, Brand, ItemsOnStock, TVDisplayTechnology, \
@@ -174,11 +175,21 @@ class ItemOnStockForm(forms.ModelForm):
 
     """Definujeme si co chceme za chybovou hlášku v případě, že přidáváme na sklad existující komponentu"""
 
-    def clean_television_id(self):
-        television_id = self.cleaned_data.get('television_id')
-        if ItemsOnStock.objects.filter(television_id=television_id).exists():
-            raise forms.ValidationError('Tato položka již je na skladě.')
-        return television_id
+    def clean(self):
+        cleaned_data = super().clean()
+        television_id = cleaned_data.get('television_id')
+
+        # Pokud je instance (tedy jde o update) a není zde konflikt s jiným záznamem
+        if self.instance.pk:
+            existing_item = ItemsOnStock.objects.filter(television_id=television_id).exclude(pk=self.instance.pk)
+            if existing_item.exists():
+                raise ValidationError('Tato položka již je na skladě.')
+        else:
+            # Kontrola pro nový záznam
+            if ItemsOnStock.objects.filter(television_id=television_id).exists():
+                raise ValidationError('Tato položka již je na skladě.')
+
+        return cleaned_data
 
 
 class OrderForm(forms.ModelForm):
