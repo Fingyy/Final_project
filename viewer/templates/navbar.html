@@ -30,7 +30,7 @@
 
             <!-- Right aligned part of the navbar -->
             <div class="navbar-nav ml-auto">
-                {% if user.is_superuser %}
+                {% if user.is_superuser or stock_admin %}
                     <a class="nav-item nav-link active" href="{% url 'order_list' %}">Objednávky</a>
                 {% endif %}
                 {% if user.is_authenticated %}

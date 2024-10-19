@@ -2,29 +2,29 @@
 
 {% block content %}
     <h2>Objednávka </h2>
-            <div>
-                <span style="font-weight: bold;">ID objednávky:</span> "{{ order.order_id }}"
-            </div>
-            <div>
-                <span style="font-weight: bold;">Datum:</span> {{ order.order_date }}
-            </div>
-            <div>
-                <span style="font-weight: bold;">Status:</span> {{ order.status }}
-            </div>
-            <div>
-                <span style="font-weight: bold;">Celková cena:</span> {{ order.price|floatformat:0 }} Kč
-            </div>
-            <div>
-                <span style="font-weight: bold;">Obsah:</span>
+        <div>
+            <span style="font-weight: bold;">ID objednávky:</span> "{{ order.order_id }}"
+        </div>
+        <div>
+            <span style="font-weight: bold;">Datum:</span> {{ order.order_date }}
+        </div>
+        <div>
+            <span style="font-weight: bold;">Status:</span> {{ order.status }}
+        </div>
+        <div>
+            <span style="font-weight: bold;">Celková cena objednávky:</span> {{ order.price|floatformat:0 }},- Kč
+        </div>
+        <div>
+            <span style="font-weight: bold;">Zboží v objednávce:</span>
                 <ul>
                     {% for tv in order.television.all %}
-                        <li>{{ tv }} (Cena: {{ tv.price|floatformat:0 }} Kč) </li>
+                        <li>{{ tv }} (Cena: {{ tv.price|floatformat:0 }} Kč) - Počet: {{ count }} </li>
                     {% endfor %}
                 </ul>
-            </div>
-            
+        </div>
     <a href="{% url 'order_list' %}" class="btn btn-outline-secondary">Zpátky na se seznam objednávek</a>
     {% if user.is_superuser %}
-        <a href="{% url 'order_delete' order.order_id %}" class="btn btn-outline-danger">Smazat</a>
-    {% endif %}
+{#                <a href="{% url 'tv_update' television.pk %}" class="btn btn-warning">Edit</a>#}
+                <a href="{% url 'order_delete' order_id=order.order_id  %}" class="btn btn-outline-danger">Smazat</a>
+            {% endif %}
 {% endblock %}
