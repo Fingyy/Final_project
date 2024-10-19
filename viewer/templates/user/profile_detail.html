@@ -1,8 +1,16 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
     <h2>Profil</h2>
     <div class="mb-4"></div>
+
+    {% if user.profile.profile_picture %}
+        <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" style="width: 150px; height: auto;" class="img-thumbnail mb-3">
+    {% else %}
+        <img src="{% static 'avatars/profile_pic.png' %}" alt="Default Profile Picture" style="width: 150px; height: auto;" class="img-thumbnail mb-3">
+    {% endif %}
+   <!-- Edit Profile Button <div class="mb-4"></div>-->
     <h4>{{ user.profile.first_name }} {{ user.profile.last_name }}</h4>
     <div class="mb-3"></div>
     <p>Uživatelské jméno: {{ user.username }}</p>
@@ -12,6 +20,7 @@
     <p>Adresa: {{ user.profile.address|default:""  }}</p>
     <p>Město: {{ user.profile.city|default:""  }}</p>
     <p>PSČ: {{ user.profile.zipcode|default:""  }}</p>
+    <p>Komunikační kanál: {{ user.profile.communication_channel|default:"Email"  }}</p>
     <p>Datum registrace: {{ user.date_joined|date:"d.m.Y" }}</p>
     <a href="{% url 'password_change' %}" class="btn btn-warning">Změna hesla</a>
     <!-- Edit Profile Button -->

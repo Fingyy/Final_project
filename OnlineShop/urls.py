@@ -15,20 +15,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from viewer.views import (BaseView, TVDetailView, TVListView, TVCreateView, TVUpdateView, TVDeleteView,
                           FilteredTelevisionListView, ProfileView, SubmittableLoginView, CustomLogoutView,
                           SubmittablePasswordChangeView, MobileListView, OrderSuccessView, OrderDeleteView,
                           OrderListView, OrderDetailView, AddToCartView, RemoveFromCartView, CartView, CheckoutView,
                           edit_profile, signup, BrandCreateView, SearchResultsView, ItemOnStockListView,
-                          ItemOnStockCreateView, ItemOnStockUpdateView, ItemOnStockDeleteView)
+                          ItemOnStockCreateView, ItemOnStockUpdateView, ItemOnStockDeleteView, BrandDeleteView,
+                          TVDisplayTechnologyCreateView, DisplayResolutionCreateView, OperationSystemCreateView,
+                          TVDisplayTechnologyDeleteView, TVDisplayResolutionDeleteView, TVOperationSystemDeleteView)
 from viewer.models import (Profile, Television, Brand, TVOperationSystem, TVDisplayResolution, TVDisplayTechnology,
                            MobilePhone, MobileDisplay, MobileConstruction, MobileUserMemory, MobileRAM,
                            MobileOperationSystem, Order, ItemsOnStock
                            )
-
-from django.conf import settings
-from django.conf.urls.static import static
 
 admin.site.register([Television, Brand, TVDisplayResolution, TVDisplayTechnology, TVOperationSystem, MobilePhone,
                      MobileDisplay, MobileConstruction, MobileUserMemory, MobileRAM, MobileOperationSystem, Profile,
@@ -47,6 +48,13 @@ urlpatterns = [
     path('password_change/', SubmittablePasswordChangeView.as_view(), name='password_change'),
     # ----------------TV sekce----------------
     path('brand/create/', BrandCreateView.as_view(), name='brand_create'),
+    path('brand/delete', BrandDeleteView.as_view(), name='brand_delete'),
+    path('technology/create', TVDisplayTechnologyCreateView.as_view(), name='technology_create'),
+    path('technology/delete', TVDisplayTechnologyDeleteView.as_view(), name='technology_delete'),
+    path('resolution/create', DisplayResolutionCreateView.as_view(), name='resolution_create'),
+    path('resolution/delete', TVDisplayResolutionDeleteView.as_view(), name='resolution_delete'),
+    path('system/create/', OperationSystemCreateView.as_view(), name='system_create'),
+    path('system/delete', TVOperationSystemDeleteView.as_view(), name='system_delete'),
     path('tv/list/', TVListView.as_view(), name='tv_list'),
     path('tv/create/', TVCreateView.as_view(), name='tv_create'),
     path('tv/update/<pk>', TVUpdateView.as_view(), name='tv_update'),
