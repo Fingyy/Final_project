@@ -25,7 +25,8 @@ from viewer.views import (BaseView, TVDetailView, TVListView, TVCreateView, TVUp
                           edit_profile, signup, BrandCreateView, SearchResultsView, ItemOnStockListView,
                           ItemOnStockCreateView, ItemOnStockUpdateView, ItemOnStockDeleteView, BrandDeleteView,
                           TVDisplayTechnologyCreateView, DisplayResolutionCreateView, OperationSystemCreateView,
-                          TVDisplayTechnologyDeleteView, TVDisplayResolutionDeleteView, TVOperationSystemDeleteView)
+                          TVDisplayTechnologyDeleteView, TVDisplayResolutionDeleteView, TVOperationSystemDeleteView,
+                          terms_view)
 from viewer.models import (Profile, Television, Brand, TVOperationSystem, TVDisplayResolution, TVDisplayTechnology,
                            MobilePhone, MobileDisplay, MobileConstruction, MobileUserMemory, MobileRAM,
                            MobileOperationSystem, Order, ItemsOnStock
@@ -82,7 +83,7 @@ urlpatterns = [
     path('orders/', OrderListView.as_view(), name='order_list'),
     path('order/<uuid:order_id>/', OrderDetailView.as_view(), name='order_detail'),
     path('order/delete/<uuid:order_id>/', OrderDeleteView.as_view(), name='order_delete'),
-
+    path('terms/', terms_view, name='terms'),
 ]
 
 if settings.DEBUG:
