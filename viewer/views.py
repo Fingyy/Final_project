@@ -641,3 +641,18 @@ class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def get_object(self):
         # Ziskame objednavku podle order_id predaneho v URL
         return get_object_or_404(Order, order_id=self.kwargs['order_id'])
+
+from django.shortcuts import render
+from django.views.generic import TemplateView
+
+def home(request):
+    return render(request, 'home.html')
+
+
+from django.shortcuts import render
+
+def terms_view(request):
+    return render(request, 'terms.html')
+
+class TermsView(TemplateView):
+    template_name = 'terms.html'
