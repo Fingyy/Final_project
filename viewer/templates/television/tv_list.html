@@ -112,34 +112,36 @@
 
         <!-- Sloupec pro tabulku s televizemi (vpravo) -->
         <div class="col-9">
-            <table class="table">
-                <tbody>
-                    <div class="container text-center">
-                        <div class="row text-bg-info p-3">
-                            <div class="col">
-                                <a href="{% url 'filtered_smart_tv' smart_tv='smart' %}" style="text-decoration: none;">Smart TV</a>
-                            </div>
-                            <div class="col">
-                                <a href="{% url 'filtered_tv_by_technology' technology='OLED' %}" style="text-decoration: none;">OLED TV</a>
-                            </div>
-                            <div class="col">
-                                <a href="{% url 'filtered_tv_by_technology' technology='QLED' %}" style="text-decoration: none;">QLED TV</a>
-                            </div>
-                            
-                        </div>
-                        <div class="row text-bg-info p-3">
-                            <div class="col">
-                                <a href="{% url 'filtered_tv_by_resolution' resolution='8K Ultra HD' %}" style="text-decoration: none;">8K TV</a>
-                            </div>
-                            <div class="col">
-                                <a href="{% url 'filtered_tv_by_resolution' resolution='4K Ultra HD' %}" style="text-decoration: none;">4K TV</a>
-                            </div>
-                            <div class="col">
-                                <a href="{% url 'filtered_tv_by_op_system' op_system='Android TV' %}" style="text-decoration: none;">Android TV</a>
-                            </div>
-                        </div>
+    <table class="table">
+        <tbody>
+            <div class="container text-center">
+                <div class="row text-bg-info p-3">
+                    <div class="col">
+                        <a href="{% url 'filtered_smart_tv' smart_tv='smart' %}" style="text-decoration: none; color: white;">Smart TV</a>
                     </div>
-                    {% for television in object_list %}
+                    <div class="col">
+                        <a href="{% url 'filtered_tv_by_technology' technology='OLED' %}" style="text-decoration: none; color: white;">OLED TV</a>
+                    </div>
+                    <div class="col">
+                        <a href="{% url 'filtered_tv_by_technology' technology='QLED' %}" style="text-decoration: none; color: white;">QLED TV</a>
+                    </div>
+                </div>
+                <div class="row text-bg-info p-3">
+                    <div class="col">
+                        <a href="{% url 'filtered_tv_by_resolution' resolution='8K Ultra HD' %}" style="text-decoration: none; color: white;">8K TV</a>
+                    </div>
+                    <div class="col">
+                        <a href="{% url 'filtered_tv_by_resolution' resolution='4K Ultra HD' %}" style="text-decoration: none; color: white;">4K TV</a>
+                    </div>
+                    <div class="col">
+                        <a href="{% url 'filtered_tv_by_op_system' op_system='Android TV' %}" style="text-decoration: none; color: white;">Android TV</a>
+                    </div>
+                </div>
+            </div>
+            {% for television in object_list %}
+            <tr>
+                <td class="border border-white"> <!-- Doplňovat třídy border pro bílé ohraničení -->
+                    {{ television.name }} <!-- Zde by mělo být vaše zobrazení -->
                     <tr>
                         <td>
                             <!-- Název televizoru -->
