@@ -43,7 +43,7 @@
     
 </style>
 
-    <a href="{% url 'tv_list' %}">< Back to TV list</a>
+    <a href="{% url 'tv_list' %}">< Zpátky na seznam TV</a>
     <br>
         <div class="tv-details-container" style="display: flex; justify-content: space-between;">
         
@@ -64,10 +64,7 @@
             {% if user.is_authenticated and item_on_stock.quantity > 0 %}
                 <a href="{% url 'add_to_cart' television.pk %}" class="btn btn-success">Do košíku</a>
             {% endif %}
-            {% if user.is_authenticated and user.is_superuser %}
-                <a href="{% url 'tv_update' television.pk %}" class="btn btn-warning">Edit</a>
-                <a href="{% url 'tv_delete' television.pk %}" class="btn btn-danger">Delete</a>
-            {% elif is_tv_admin %}
+            {% if is_tv_admin or user.is_superuser %}
                 <a href="{% url 'tv_update' television.pk %}" class="btn btn-warning">Edit</a>
                 <a href="{% url 'tv_delete' television.pk %}" class="btn btn-danger">Delete</a>
             {% endif %}

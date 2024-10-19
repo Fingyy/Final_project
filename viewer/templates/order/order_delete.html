@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <form method="post">
+    {% csrf_token %} 
+    <p>
+      Are you sure you want to delete {{ order.order_id}} from database?
+    </p> 
+    <input type="submit" value="Submit" class="btn btn-danger">
+    <a href="{% url 'order_detail' order_id=order.order_id %}" class="btn btn-warning">Back</a>
+  </form> 
+{% endblock %}

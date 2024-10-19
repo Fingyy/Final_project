@@ -15,20 +15,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from viewer.views import (BaseView, TVDetailView, TVListView, TVCreateView, TVUpdateView, TVDeleteView,
                           FilteredTelevisionListView, ProfileView, SubmittableLoginView, CustomLogoutView,
-                          SubmittablePasswordChangeView, MobileListView, CreateOrderView, OrderSuccessView,
+                          SubmittablePasswordChangeView, MobileListView, OrderSuccessView, OrderDeleteView,
                           OrderListView, OrderDetailView, AddToCartView, RemoveFromCartView, CartView, CheckoutView,
                           edit_profile, signup, BrandCreateView, SearchResultsView, ItemOnStockListView,
-                          ItemOnStockCreateView, ItemOnStockUpdateView, ItemOnStockDeleteView)
+                          ItemOnStockCreateView, ItemOnStockUpdateView, ItemOnStockDeleteView, BrandDeleteView,
+                          TVDisplayTechnologyCreateView, DisplayResolutionCreateView, OperationSystemCreateView,
+                          TVDisplayTechnologyDeleteView, TVDisplayResolutionDeleteView, TVOperationSystemDeleteView,
+                          terms_view)
 from viewer.models import (Profile, Television, Brand, TVOperationSystem, TVDisplayResolution, TVDisplayTechnology,
                            MobilePhone, MobileDisplay, MobileConstruction, MobileUserMemory, MobileRAM,
                            MobileOperationSystem, Order, ItemsOnStock
                            )
-
-from django.conf import settings
-from django.conf.urls.static import static
 
 admin.site.register([Television, Brand, TVDisplayResolution, TVDisplayTechnology, TVOperationSystem, MobilePhone,
                      MobileDisplay, MobileConstruction, MobileUserMemory, MobileRAM, MobileOperationSystem, Profile,
@@ -47,6 +49,13 @@ urlpatterns = [
     path('password_change/', SubmittablePasswordChangeView.as_view(), name='password_change'),
     # ----------------TV sekce----------------
     path('brand/create/', BrandCreateView.as_view(), name='brand_create'),
+    path('brand/delete', BrandDeleteView.as_view(), name='brand_delete'),
+    path('technology/create', TVDisplayTechnologyCreateView.as_view(), name='technology_create'),
+    path('technology/delete', TVDisplayTechnologyDeleteView.as_view(), name='technology_delete'),
+    path('resolution/create', DisplayResolutionCreateView.as_view(), name='resolution_create'),
+    path('resolution/delete', TVDisplayResolutionDeleteView.as_view(), name='resolution_delete'),
+    path('system/create/', OperationSystemCreateView.as_view(), name='system_create'),
+    path('system/delete', TVOperationSystemDeleteView.as_view(), name='system_delete'),
     path('tv/list/', TVListView.as_view(), name='tv_list'),
     path('tv/create/', TVCreateView.as_view(), name='tv_create'),
     path('tv/update/<pk>', TVUpdateView.as_view(), name='tv_update'),
@@ -70,11 +79,11 @@ urlpatterns = [
     path('cart/remove/<int:television_id>/', RemoveFromCartView.as_view(), name='remove_from_cart'),
     path('cart/', CartView.as_view(), name='view_cart'),
     path('checkout/', CheckoutView.as_view(), name='checkout'),
-    path('order/create/<int:television_id>/', CreateOrderView.as_view(), name='create_order'),
     path('order/success/<uuid:order_id>/', OrderSuccessView.as_view(), name='order_success'),
     path('orders/', OrderListView.as_view(), name='order_list'),
     path('order/<uuid:order_id>/', OrderDetailView.as_view(), name='order_detail'),
-
+    path('order/delete/<uuid:order_id>/', OrderDeleteView.as_view(), name='order_delete'),
+    path('terms/', terms_view, name='terms'),
 ]
 
 if settings.DEBUG:

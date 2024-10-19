@@ -6,10 +6,13 @@
     <ol>
         {% for order in orders %}
             <li>
-                <div>ID objednávky: "<a href="{% url 'order_detail' order_id=order.order_id %}">{{ order.order_id }}</a>"</div>
+                <div>ID objednávky: "<a href="{% url 'order_detail' order.order_id %}">{{ order.order_id }}</a>"</div>
                 <div>Datum: {{ order.order_date  }}</div>
                 <div>{{ cart.total_price }}</div>
                 <div>Status: {{ order.status  }}</div>
+                {% if user.is_superuser %}
+                    <div>Objednávka uživatele: {{ order.user  }}</div>
+                {% endif %}
             </li>
         {% endfor %}
     </ol>

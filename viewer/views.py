@@ -1,15 +1,17 @@
 import logging
 
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.views.generic import TemplateView, DetailView, ListView, CreateView, UpdateView, DeleteView, FormView, View
-from viewer.models import Television, MobilePhone, ItemsOnStock,  Order, Profile
+from viewer.models import Television, MobilePhone, ItemsOnStock, Order, Profile, Brand, TVDisplayTechnology
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth import login
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from viewer.forms import (TVForm, CustomAuthenticationForm, CustomPasswordChangeForm, ProfileForm, SignUpForm,
-                          OrderForm, BrandForm, ItemOnStockForm)
+                          OrderForm, BrandForm, ItemOnStockForm, TVDisplayTechnologyForm, TVDisplayResolutionForm,
+                          TVOperationSystemForm, BrandDeleteForm, TVDisplayTechnologyDeleteForm,
+                          TVDisplayResolutionDeleteForm, TVOperationSystemDeleteForm)
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib import messages
@@ -55,8 +57,8 @@ class SearchResultsView(ListView):
         if query:
             return Television.objects.filter(
                 Q(brand__brand_name__icontains=query) |  # Vyhledávání podle Brand name
-                Q(display_technology__name__icontains=query) | # Vyhledávání podle Display technology
-                Q(brand_model__icontains=query) # Vyhledávání podle Brand model
+                Q(display_technology__name__icontains=query) |  # Vyhledávání podle Display technology
+                Q(brand_model__icontains=query)  # Vyhledávání podle Brand model
             )
         return Television.objects.none()  # Vrací prázdný queryset pokud není žádný k dispozici
 
@@ -75,10 +77,116 @@ class BrandCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return super().form_invalid(form)
 
 
+class TVDisplayTechnologyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    template_name = 'television/technology_create.html'
+    form_class = TVDisplayTechnologyForm
+    success_url = reverse_lazy('tv_create')
+
+    def test_func(self):
+        # Umožní přístup pouze členům skupiny 'tv_admin' nebo superuživatelům
+        return self.request.user.is_superuser or self.request.user.groups.filter(name='tv_admin').exists()
+
+    def form_invalid(self, form):
+        logger.warning('User provided invalid data.')
+        return super().form_invalid(form)
+
+
+class DisplayResolutionCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    template_name = 'television/resolution_create.html'
+    form_class = TVDisplayResolutionForm
+    success_url = reverse_lazy('tv_create')
+
+    def test_func(self):
+        # Umožní přístup pouze členům skupiny 'tv_admin' nebo superuživatelům
+        return self.request.user.is_superuser or self.request.user.groups.filter(name='tv_admin').exists()
+
+    def form_invalid(self, form):
+        logger.warning('User provided invalid data.')
+        return super().form_invalid(form)
+
+
+class OperationSystemCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    template_name = 'television/system_create.html'
+    form_class = TVOperationSystemForm
+    success_url = reverse_lazy('tv_create')
+
+    def test_func(self):
+        # Umožní přístup pouze členům skupiny 'tv_admin' nebo superuživatelům
+        return self.request.user.is_superuser or self.request.user.groups.filter(name='tv_admin').exists()
+
+    def form_invalid(self, form):
+        logger.warning('User provided invalid data.')
+        return super().form_invalid(form)
+
+
+class BrandDeleteView(View):
+    template_name = 'television/brand_delete.html'
+
+    def get(self, request, *args, **kwargs):
+        form = BrandDeleteForm()  # Instantiate the form
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = BrandDeleteForm(request.POST)
+        if form.is_valid():
+            brand = form.cleaned_data['brand']
+            brand.delete()  # Delete the selected brand
+            return redirect('tv_create')
+        return render(request, self.template_name, {'form': form})
+
+
+class TVDisplayTechnologyDeleteView(View):
+    template_name = 'television/technology_delete.html'
+
+    def get(self, request, *args, **kwargs):
+        form = TVDisplayTechnologyDeleteForm()  # Instantiate the form
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = TVDisplayTechnologyDeleteForm(request.POST)
+        if form.is_valid():
+            display_technology = form.cleaned_data['display_technology']
+            display_technology.delete()  # Delete the selected brand
+            return redirect('tv_create')
+        return render(request, self.template_name, {'form': form})
+
+
+class TVDisplayResolutionDeleteView(View):
+    template_name = 'television/resolution_delete.html'
+
+    def get(self, request, *args, **kwargs):
+        form = TVDisplayResolutionDeleteForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = TVDisplayResolutionDeleteForm(request.POST)
+        if form.is_valid():
+            display_resolution = form.cleaned_data['display_resolution']
+            display_resolution.delete()  # Delete the selected brand
+            return redirect('tv_create')
+        return render(request, self.template_name, {'form': form})
+
+
+class TVOperationSystemDeleteView(View):
+    template_name = 'television/system_delete.html'
+
+    def get(self, request, *args, **kwargs):
+        form = TVOperationSystemDeleteForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = TVOperationSystemDeleteForm(request.POST)
+        if form.is_valid():
+            tv_system = form.cleaned_data['tv_system']
+            tv_system.delete()  # Delete the selected brand
+            return redirect('tv_create')
+        return render(request, self.template_name, {'form': form})
+
+
 class TVListView(ListView):
     template_name = 'television/tv_list.html'
     model = Television
-    context_object_name = 'object_list'  # Kontext pro šablonu
+    context_object_name = 'object_list'
 
     def get_queryset(self):
         # Získání všech televizí
@@ -135,7 +243,6 @@ class TVCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     success_url = reverse_lazy('tv_list')
 
     def test_func(self):
-        # Umožní přístup pouze členům skupiny 'tv_admin' nebo superuživatelům
         return self.request.user.is_superuser or self.request.user.groups.filter(name='tv_admin').exists()
 
     def form_invalid(self, form):
@@ -150,7 +257,6 @@ class TVUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     success_url = reverse_lazy('tv_list')
 
     def test_func(self):
-        # Umozni pristup pouze clenum skupiny 'tv_admin' nebo superuzivatelum
         return self.request.user.is_superuser or self.request.user.groups.filter(name='tv_admin').exists()
 
     def form_invalid(self, form):
@@ -218,7 +324,6 @@ class ItemOnStockListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     context_object_name = 'items'
 
     def test_func(self):
-        # Umozni pristup pouze clenum skupiny 'stock_admin' nebo superuzivatelum
         return self.request.user.is_superuser or self.request.user.groups.filter(name='stock_admin').exists()
 
 
@@ -379,6 +484,11 @@ class CheckoutView(LoginRequiredMixin, FormView):
     form_class = OrderForm
 
     """Přesměrování, pokud je košík prázdný"""
+
+    def __init__(self, **kwargs):
+        super().__init__(kwargs)
+        self.order = None
+
     def dispatch(self, request, *args, **kwargs):
         cart = self.request.session.get('cart', {})
         if not cart:
@@ -403,7 +513,7 @@ class CheckoutView(LoginRequiredMixin, FormView):
             'city': user.profile.city if hasattr(user, 'profile') else '',
             'zipcode': user.profile.zipcode if hasattr(user, 'profile') else '',
             'phone_number': user.profile.phone_number if hasattr(user, 'profile') else '',
-            })
+        })
         return initial
 
     """Předání uživatele do formuláře při jeho inicializaci"""
@@ -419,21 +529,27 @@ class CheckoutView(LoginRequiredMixin, FormView):
         """ Vytvoření objednávky, ale zatím neuložíme """
         self.order = form.save(commit=False)
         self.order.user = self.request.user  # Priradime uzivatele k objednávce
+        self.order.price = 0  # Inicializace celkové ceny na 0
         # Nejprve ulozime objednavku
         self.order.save()
 
         """ Zpracování položek z košíku """
         cart = self.request.session.get('cart', {})
-        for television_id in cart:
-            television = Television.objects.get(id=television_id)
-            self.order.television.add(television)
+        total_price = 0  # Proměnná pro výpočet celkové ceny
 
-        """Nastavení stavu objednávky"""
+        for television_id, item in cart.items():
+            count = item['quantity']  # Získání počtu z košíku
+            television = Television.objects.get(id=television_id)
+
+            for _ in range(count):  # Přidání televize do objednávky podle počtu
+                self.order.television.add(television)
+                total_price += television.price  # Přičtení ceny
+
+        self.order.price = total_price
         self.order.status = 'submitted'
         self.order.save()
 
-        """Vyčištění košíku"""
-        self.request.session['cart'] = {}
+        self.request.session['cart'] = {} # Vyčištění košíku
         return super().form_valid(form)
 
 
@@ -492,7 +608,10 @@ class OrderListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         # Zobrazi pouze objednavky aktualne prihlaseneho uzivatele
-        return Order.objects.filter(user=self.request.user)
+        if self.request.user.is_superuser:
+            return Order.objects.all()
+        else:
+            return Order.objects.filter(user=self.request.user)
 
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
@@ -504,7 +623,36 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
         # Ziskame objednavku podle order_id predaneho v URL
         order = get_object_or_404(Order, order_id=self.kwargs['order_id'])
 
-        # Overeni, zda je uzivatel vlastnikem objednavky
-        if order.user != self.request.user:
+        # Overeni, zda je uzivatel vlastnikem objednavky nebo superuser
+        if order.user != self.request.user and not self.request.user.is_superuser:
             raise Http404("Nemáte oprávnění k zobrazení této objednávky.")
         return order
+
+
+class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Order
+    template_name = "order/order_delete.html"
+    success_url = reverse_lazy('order_list')
+    context_object_name = 'order'
+
+    def test_func(self):
+        return self.request.user.is_superuser or self.request.user.groups.filter(name='tv_admin').exists()
+
+    def get_object(self):
+        # Ziskame objednavku podle order_id predaneho v URL
+        return get_object_or_404(Order, order_id=self.kwargs['order_id'])
+
+from django.shortcuts import render
+from django.views.generic import TemplateView
+
+def home(request):
+    return render(request, 'home.html')
+
+
+from django.shortcuts import render
+
+def terms_view(request):
+    return render(request, 'terms.html')
+
+class TermsView(TemplateView):
+    template_name = 'terms.html'

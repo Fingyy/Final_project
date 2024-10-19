@@ -1,10 +1,13 @@
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
-from viewer.models import Profile, Television, MobilePhone, Order, Brand, ItemsOnStock
+import re
+
 from django import forms
-from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-import re
+from django.utils.translation import gettext_lazy as _
+
+from viewer.models import Profile, Television, MobilePhone, Order, Brand, ItemsOnStock, TVDisplayTechnology, \
+    TVDisplayResolution, TVOperationSystem
 
 
 class CustomAuthenticationForm(AuthenticationForm):
@@ -111,6 +114,54 @@ class TVForm(forms.ModelForm):
         fields = '__all__'
 
 
+class TVDisplayTechnologyForm(forms.ModelForm):
+    class Meta:
+        model = TVDisplayTechnology
+        fields = ['name']
+
+
+class TVDisplayResolutionForm(forms.ModelForm):
+    class Meta:
+        model = TVDisplayResolution
+        fields = ['name']
+
+
+class TVOperationSystemForm(forms.ModelForm):
+    class Meta:
+        model = TVOperationSystem
+        fields = ['name']
+
+
+class BrandDeleteForm(forms.Form):
+    brand = forms.ModelChoiceField(
+        queryset=Brand.objects.all(),  # Fetch all brands for the dropdown
+        widget=forms.Select,  # Dropdown widget
+        empty_label="Select a brand"  # Display a prompt at the top
+    )
+
+
+class TVDisplayTechnologyDeleteForm(forms.Form):
+    display_technology = forms.ModelChoiceField(
+        queryset=TVDisplayTechnology.objects.all(),
+        widget=forms.Select,
+        empty_label="Select a display technology"
+    )
+
+
+class TVDisplayResolutionDeleteForm(forms.Form):
+    display_resolution = forms.ModelChoiceField(
+        queryset=TVDisplayResolution.objects.all(),
+        widget=forms.Select,
+        empty_label="Select a display resolution"
+    )
+
+
+class TVOperationSystemDeleteForm(forms.Form):
+    tv_system = forms.ModelChoiceField(
+        queryset=TVOperationSystem.objects.all(),
+        widget=forms.Select,
+        empty_label="Select an Operation System"
+    )
 class MobileForm(forms.ModelForm):
     class Meta:
         model = MobilePhone
@@ -123,11 +174,22 @@ class ItemOnStockForm(forms.ModelForm):
         fields = '__all__'
 
     """Definujeme si co chceme za chybovou hlášku v případě, že přidáváme na sklad existující komponentu"""
-    def clean_television_id(self):
-        television_id = self.cleaned_data.get('television_id')
-        if ItemsOnStock.objects.filter(television_id=television_id).exists():
-            raise forms.ValidationError('Tato položka již je na skladě.')
-        return television_id
+
+    def clean(self):
+        cleaned_data = super().clean()
+        television_id = cleaned_data.get('television_id')
+
+        # Pokud je instance (tedy jde o update) a není zde konflikt s jiným záznamem
+        if self.instance.pk:
+            existing_item = ItemsOnStock.objects.filter(television_id=television_id).exclude(pk=self.instance.pk)
+            if existing_item.exists():
+                raise ValidationError('Tato položka již je na skladě.')
+        else:
+            # Kontrola pro nový záznam
+            if ItemsOnStock.objects.filter(television_id=television_id).exists():
+                raise ValidationError('Tato položka již je na skladě.')
+
+        return cleaned_data
 
 
 class OrderForm(forms.ModelForm):
@@ -154,10 +216,6 @@ class OrderForm(forms.ModelForm):
             self.fields['city'].initial = profile.city
             self.fields['zipcode'].initial = profile.zipcode
             self.fields['phone_number'].initial = profile.phone_number
-
-    # def clean(self):
-    #    if not self.television.exists():
-    #        raise ValidationError('V objednavce musi byt alespon televize nebo mobil')
 
     def save(self, commit=True):
         order = super(OrderForm, self).save(commit=False)
@@ -194,6 +252,7 @@ class ProfileForm(forms.ModelForm):
         }
 
     date_of_birth = forms.DateField(
+        required=False,
         input_formats=['%Y-%m-%d'],  # Zbezpeci, aby byl pouzit spravny format
-        widget=forms.DateInput(attrs={'type': 'date'})  # Customize the widget
+        widget=forms.DateInput(attrs={'type': 'date'})
     )

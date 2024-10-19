@@ -1,44 +1,99 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="{% url 'home' %}">Online shop</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-item nav-link active" href="{% url 'tv_list' %}">Televize</a>
-            </div>
-            <div class="navbar-nav">
-                {% if user.is_superuser or stock_admin %}
-                <a class="nav-item nav-link active" href="{% url 'stock_list' %}">Sklad</a>
-                {% endif %}
-            </div>
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Shop</title>
 
-            <!-- Search form in the middle -->
-            <div class="mx-auto d-flex justify-content-center align-items-center">
-                <form action="{% url 'search_results' %}" method="GET" class="form-inline">
-                    <div class="input-group">
-                        <input type="text" class="form-control form-control-sm" placeholder="Hledat" required name="q">
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-outline-secondary" aria-label="Search">
-                                <i class="bi bi-search"></i>
-                            </button>
+    <!-- Odkaz na Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Odkaz na Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.4.1/font/bootstrap-icons.min.css">
+
+    <style>
+        /* Všechny odkazy v navigačním panelu budou bílé */
+        .navbar-nav .nav-link {
+            color: white !important; /* Zajištění bílé barvy textu */
+        }
+
+        /* Styl pro vyhledávací pole */
+        .input-group {
+            height: 38px; /* Výška vyhledávacího pole */
+        }
+
+        .input-group input {
+            height: 100%; /* Aby vstupní pole vyplnilo celou výšku */
+            border-top-left-radius: 0; /* Kulaté rohy pro sladění s tlačítkem lupy */
+            border-bottom-left-radius: 0; /* Kulaté rohy pro sladění s tlačítkem lupy */
+        }
+
+        .input-group .input-group-text {
+            height: 100%; /* Aby lupa vyplnila celou výšku */
+            display: flex;
+            align-items: center; /* Vertikální vycentrování */
+            justify-content: center; /* Horizontální vycentrování */
+            background-color: white; /* Barva pozadí pro lupa */
+            border-top-right-radius: 0; /* Kulaté rohy pro sladění s textovým polem */
+            border-bottom-right-radius: 0; /* Kulaté rohy pro sladění s textovým polem */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigační panel -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #007bff;"> <!-- Barva nav bar -->
+        <div class="container" style="max-width: 1200px;"> <!-- Nastavení max šířky -->
+            <a class="navbar-brand text-white" href="{% url 'home' %}">Online shop</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <!-- Kategorie vlevo -->
+                <div class="navbar-nav me-auto">
+                    <a class="nav-item nav-link" href="{% url 'tv_list' %}">Televize</a>
+                    {% if user.is_superuser or stock_admin %}
+                    <a class="nav-item nav-link" href="{% url 'stock_list' %}">Sklad</a>
+                    {% endif %}
+                </div>
+
+                <!-- Hledání uprostřed s lupou -->
+                <div class="d-flex mx-auto">
+                    <form action="{% url 'search_results' %}" method="GET" class="form-inline">
+                        <div class="input-group">
+                            <label>
+                                <input type="text" class="form-control form-control-sm" placeholder="Hledat" required name="q">
+                            </label>
+                            <div class="input-group-append">
+                                <!-- Lupa uvnitř input field -->
+                                <button class="input-group-text" type="submit" aria-label="Search">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </div>
+                    </form>
+                </div>
 
-            <!-- Right aligned part of the navbar -->
-            <div class="navbar-nav ml-auto">
-                {% if user.is_authenticated %}
-                    <a class="nav-item nav-link active" href="{% url 'view_cart' %}">Košík</a>
-                    <a class="nav-item nav-link active" href="{% url 'profile_detail' %}">Profil</a>
-                    <a class="nav-item nav-link active" href="{% url 'logout' %}">Odhlásit</a>
-                {% else %}
-                    <a class="nav-item nav-link active" href="{% url 'login' %}">Přihlášení</a>
-                    <a class="nav-item nav-link active" href="{% url 'signup' %}">Registrace</a>
-                {% endif %}
+                <!-- Kategorie vpravo -->
+                <div class="navbar-nav ml-auto">
+                    {% if user.is_superuser or stock_admin %}
+                        <a class="nav-item nav-link active" href="{% url 'order_list' %}">Objednávky</a>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <a class="nav-item nav-link active" href="{% url 'view_cart' %}">Košík</a>
+                        <a class="nav-item nav-link active" href="{% url 'profile_detail' %}">Profil</a>
+                        <a class="nav-item nav-link active" href="{% url 'logout' %}">Odhlásit</a>
+                    {% else %}
+                        <a class="nav-item nav-link active" href="{% url 'login' %}">Přihlášení</a>
+                        <a class="nav-item nav-link active" href="{% url 'signup' %}">Registrace</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
-</nav>
+    </nav> <!-- Zavření <nav> tagu -->
+
+    <!-- Odkazy na Bootstrap JS a jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

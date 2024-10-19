@@ -142,20 +142,22 @@ def validate_not_future_date(value):
 
 
 class Profile(models.Model):
-    role_choices = [
-        ('ADMINISTRATOR', 'Administrator'),
-        ('USER', 'User'),
-    ]
 
     communication_channel_choices = [
-        ('POST', 'Pošta'),
-        ('EMAIL', 'Email'),
-        ('TELEPHONE', 'Telefon'),
+        ('Pošta', 'Pošta'),
+        ('Email', 'Email'),
+        ('Telefon', 'Telefon'),
     ]
 
     alpha_validator = RegexValidator(
         regex=r'^[a-zA-Z]+$',  # Povoluje pouze písmena
         message='Povoleny jsou pouze znaky a-z nebo A-Z.'
+    )
+
+    zipcode_validator = RegexValidator(
+        regex=r'^\d{5}$',  # Regex for exactly 5 digits
+        message='PSČ musí mít 5 číslic',
+        code='invalid_zipcode'
     )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -178,10 +180,9 @@ class Profile(models.Model):
     date_of_birth = models.DateField(null=True, blank=True, validators=[validate_not_future_date])
     address = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=25, blank=True, validators=[alpha_validator])
-    zipcode = models.CharField(max_length=5, blank=True)
-    avatar = models.ImageField(upload_to='profile_pics', blank=True, null=True)
-    role = models.CharField(max_length=20, choices=role_choices, default='USER')
-    communication_channel = models.CharField(max_length=10, choices=communication_channel_choices, default='EMAIL')
+    zipcode = models.CharField(max_length=5, blank=True, validators=[zipcode_validator])
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/profile_pic.png', blank=True, null=True)
+    communication_channel = models.CharField(max_length=10, choices=communication_channel_choices, default='Email')
 
     @property
     def email(self):

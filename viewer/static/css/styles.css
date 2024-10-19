@@ -1,0 +1,104 @@
+/* styles.css */
+html {
+    -webkit-text-size-adjust: 100%; /* Pro starší WebKit prohlížeče */
+    text-size-adjust: 100%; /* Pro moderní prohlížeče */
+}
+
+body {
+    background-color: #f0f8ff; /* Světle modré pozadí pro celou stránku */
+    color: black; /* Černé písmo pro lepší čitelnost */
+}
+
+.footer {
+    background-color: rgba(0, 0, 0, 0.5); /* Poloprůhledné pozadí pro patičku */
+    padding: 1rem 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+.container {
+    max-width: 800px; /* Maximální šířka kontejneru */
+    margin: 0 auto; /* Centrovat kontejner */
+    padding: 20px; /* Padding pro prostor uvnitř kontejneru */
+}
+
+
+.form-group {
+    margin-bottom: 15px; /* Prostor mezi formulářovými prvky */
+}
+
+.d-flex-center {
+    display: flex; /* Flexbox pro zarovnání */
+    justify-content: center; /* Horizontální zarovnání */
+    align-items: center; /* Vertikální zarovnání */
+    min-height: 100vh; /* Minimální výška na 100% viewportu */
+}
+
+
+.icon-container {
+    margin-top: 10px; /* Mezera nad ikonami */
+    display: flex; /* Použití flexboxu pro ikony */
+    justify-content: center; /* Uložení ikon na střed */
+}
+
+.icon {
+    width: 150px; /* Velikost ikon */
+    height: 150px; /* Velikost ikon */
+    margin: 0 30px; /* Mezera mezi ikonami */
+}
+
+.square-card {
+    width: 100%; /* Šířka karty */
+    max-width: 250px; /* Maximální šířka karty */
+    height: 0; /* Výchozí výška */
+    padding-top: 100%; /* Poměr stran 1:1 pro vytvoření čtverce */
+    position: relative; /* Pro pozicování obsahu */
+    border: 1px solid #ccc; /* Okraj karty */
+    overflow: hidden; /* Skrýt přetečení obsahu */
+    box-sizing: border-box; /* Aby padding a okraje neovlivnily velikost */
+}
+
+.square-card img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Zajišťuje, že obrázek vyplní celou kartu a zachová poměr stran */
+    z-index: 1; /* Obrázek je na pozadí */
+}
+
+.square-card .card-body {
+    position: absolute; /* Absolutní pozicování uvnitř karty */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex; /* Flexbox pro zarovnání obsahu */
+    flex-direction: column; /* Vertikální zarovnání obsahu */
+    justify-content: space-between; /* Prostor mezi prvky uvnitř karty */
+    padding: 16px; /* Vnitřní okraje */
+    box-sizing: border-box; /* Aby padding neovlivnil velikost */
+    z-index: 2; /* Zajišťuje, že text bude nad obrázkem */
+    background: rgba(0, 0, 0, 0.5); /* Poloprůhledné pozadí, aby byl text čitelný nad obrázkem */
+    color: white; /* Bílá barva textu pro lepší kontrast */
+}
+
+.card-title {
+    font-size: 1.2rem; /* Velikost písma pro nadpis */
+    margin: 0; /* Odstranění výchozích okrajů */
+}
+
+.card-text {
+    flex-grow: 1; /* Umožňuje textu růst */
+    overflow: hidden; /* Skrýt přetečení textu */
+    text-overflow: ellipsis; /* Tři tečky na konci oříznutého textu */
+    display: -webkit-box; /* Flexbox pro ořezání textu */
+    -webkit-box-orient: vertical; /* Směr flexboxu je vertikální */
+    -webkit-line-clamp: 3; /* Oříznutí textu na maximálně 3 řádky */
+}
+
+.card-footer {
+    text-align: right; /* Zarovnání textu v patičce karty doprava */
+}
