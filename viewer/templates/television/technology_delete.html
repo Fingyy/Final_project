@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>Delete a Display Technology</h3>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+   <div class="row mb-3">
+      <label for="{{ form.display_technology.id_for_label }}" class="col-sm-2 col-form-label"></label>
+      <div class="col-sm-10">
+        {{ form.display_technology.errors }}
+        {{ form.display_technology }}  <!-- This will render the dropdown -->
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <button type="button" class="btn btn-secondary" onclick="window.history.back();">Back</button>
+</form>
+{% endblock %}
