@@ -353,10 +353,16 @@ class FilteredTelevisionListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Pridej aktualni filtry do kontextu (napr. pro zobrazeni v sablone)
-        context['selected_smart'] = self.kwargs.get('smart', 'All')
+        context['selected_smart'] = self.kwargs.get('smart_tv', 'All')
         context['selected_resolution'] = self.kwargs.get('resolution', 'All')
         context['selected_technology'] = self.kwargs.get('technology', 'All')
         context['selected_op_system'] = self.kwargs.get('op_system', 'All')
+
+        # Pro každou televizi přidáme odpovídající položku zásob
+        televisions = context['object_list']
+        for television in televisions:
+            item_on_stock = ItemsOnStock.objects.filter(television_id=television.id).first()
+            television.item_on_stock = item_on_stock
         return context
 
 
