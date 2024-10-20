@@ -1,20 +1,73 @@
 {% extends 'base.html' %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obchodní podmínky</title>
-    {% load static %}  <!-- Add this line to load static files -->
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-</head>
-<body>
-    {% include 'navbar.html' %}
 
-    <div class="container mt-5">
-        <h1>Obchodní podmínky</h1>
-        <p>Naše obchodní podmínky tadyyyy..</p>
-    </div>
-</body>
-</html>
+{% block title %}Obchodní podmínky{% endblock %}
 
+{% block content %}
+<style>
+    .container {
+        margin-top: 20px; /* nastavení horního okraje kontejneru */
+    }
+    
+    h1 {
+        margin-top: 10px; /* horní okraj nadpisu, nastav podle potřeby */
+        margin-bottom: 40px; /* dolní okraj nadpisu, nastav podle potřeby */
+    }
+</style>
+
+<div class="container mt-5">
+    <h1>Všeobecné obchodní podmínky</h1>
+    
+    <h2>1. Úvod</h2>
+    <p>Tyto Všeobecné obchodní podmínky (dále jen "VOP") se vztahují na všechny objednávky učiněné kupujícími (dále jen "kupující") prostřednictvím internetového obchodu www.onlineshop.cz provozovaného společností Děkujeme s.r.o., Pražská 25, Praha 6, 162 00 (dále jen "prodávající").</p>
+
+    <h2>2. Definice</h2>
+    <p>1. Kupující je fyzická nebo právnická osoba, která objednává zboží prostřednictvím internetového obchodu prodávajícího.</p>
+    <p>2. Prodávající je právnická osoba, která provozuje internetový obchod a dodává zboží kupujícímu.</p>
+
+    <h2>3. Objednávka a uzavření smlouvy</h2>
+    <p>1. Kupující učiní objednávku zboží prostřednictvím internetového obchodu vyplněním objednávkového formuláře.</p>
+    <p>2. Uzavření smlouvy nastává v okamžiku, kdy prodávající potvrdí přijetí objednávky kupujícího.</p>
+    
+    <h2>4. Dodací podmínky</h2>
+    <p>1. Prodávající se zavazuje dodat zboží v dohodnutém termínu, který je uveden v potvrzení objednávky.</p>
+    <p>2. Pokud je zboží skladem, prodávající je povinen zaslat zboží nejpozději do 7 pracovních dní od potvrzení objednávky.</p>
+    <p>3. V případě, že zboží není skladem, prodávající informuje kupujícího o předpokládaném termínu dodání.</p>
+    <p>4. Kupující je povinen převzít zboží v místě, které si zvolil v objednávce, tedy buď v místě dodání, nebo v místě určeném pro převzetí zboží, jinak odpovídá za náklady spojené s opakovaným doručením zboží.</p>
+    <p>5. V případě, že kupující neodebere zboží do 7 dnů od doby, kdy bylo zboží připraveno k odběru, je prodávající oprávněn odstoupit od smlouvy a požadovat náhradu škody vzniklé v souvislosti s tímto jednáním.</p>
+    <p>6. Zboží se považuje za dodané v okamžiku, kdy je kupujícímu nebo jím určené osobě předáno (např. osobní odběr, doručení kurýrem, poštou).</p>
+
+    <h2>5. Cena zboží a platební podmínky</h2>
+    <p>1. Cena zboží je uvedena na webové stránce. Ceny zboží jsou konečné a obsahují veškeré poplatky, včetně DPH.</p>
+    <p>2. Kupující má možnost uhradit cenu zboží jedním z následujících způsobů:</p>
+    <ul>
+        <li>a. bezhotovostně platební kartou;</li>
+        <li>b. bezhotovostním převodem na bankovní účet prodávajícího;</li>
+        <li>c. dobírkou při převzetí zboží.</li>
+    </ul>
+    <p>3. V případě bezhotovostní platby je kupující povinen uvést variabilní symbol, kterým je číslo objednávky. Bez uvedení variabilního symbolu není možné platbu přiřadit k objednávce.</p>
+    <p>4. Kupující je povinen uhradit cenu zboží před dodáním, pokud není dohodnuto jinak. Kupující má právo na dodání zboží až po úhradě kupní ceny.</p>
+
+    <h2>6. Odstoupení od smlouvy</h2>
+    <p>1. Kupující má právo odstoupit od smlouvy ve lhůtě 14 dnů bez udání důvodu, a to ode dne převzetí zboží.</p>
+    <p>2. Odstoupení od smlouvy je kupující povinen učinit formou jednostranného právního jednání, které musí být zasláno prodávajícímu. Kupující může využít vzorového formuláře pro odstoupení od smlouvy, který je dostupný na webové stránce.</p>
+    <p>3. V případě odstoupení od smlouvy je kupující povinen vrátit zboží na adresu prodávajícího bez zbytečného odkladu, nejpozději však do 14 dnů od odstoupení od smlouvy. Kupující nese náklady spojené s vrácením zboží.</p>
+    <p>4. Prodávající je povinen vrátit kupujícímu cenu zboží, a to do 14 dnů od odstoupení od smlouvy, avšak pouze po vrácení zboží prodávajícímu.</p>
+    <p>5. Prodávající není povinen vracet kupní cenu, pokud kupující nevrátí zboží v neporušeném stavu.</p>
+
+    <h2>7. Záruční podmínky a reklamace</h2>
+    <p>1. Na zboží se vztahuje záruka 24 měsíců, pokud není uvedeno jinak. Záruka se vztahuje na výrobní vady.</p>
+    <p>2. V případě reklamace má kupující právo na bezplatné odstranění vady zboží nebo výměnu zboží, pokud není reklamace neoprávněná.</p>
+    <p>3. Reklamaci je kupující povinen uplatnit bez zbytečného odkladu, a to formou písemného oznámení o reklamaci zaslaného na adresu prodávajícího.</p>
+    <p>4. V reklamaci kupující uvede číslo objednávky, popis vady a způsob, jakým si přeje reklamaci vyřídit.</p>
+    <p>5. Prodávající je povinen vyřídit reklamaci do 30 dnů od jejího uplatnění.</p>
+
+    <h2>8. Ochrana osobních údajů</h2>
+    <p>1. Prodávající zpracovává osobní údaje kupujícího v souladu se zákonem č. 101/2000 Sb., o ochraně osobních údajů.</p>
+    <p>2. Osobní údaje kupujícího budou použity pouze pro účely vyřízení objednávky a nebudou poskytnuty třetím osobám, s výjimkou osob, které se podílejí na plnění objednávky.</p>
+
+    <h2>9. Závěrečná ustanovení</h2>
+    <p>1. Tyto VOP nabývají účinnosti dnem 20. 10. 2024.</p>
+    <p>2. Tyto VOP se řídí českým právem. V případě sporů, které vzniknou z těchto VOP nebo v souvislosti s nimi, se strany zavazují řešit spory smírně. Pokud se strany nedohodnou, bude spor řešen příslušným soudem v místě sídla prodávajícího.</p>
+    <p>3. Pokud by se některé ustanovení těchto VOP ukázalo jako neplatné nebo nevymahatelné, zůstávají ostatní ustanovení VOP nadále v platnosti.</p>
+</div>
+{% endblock%}
