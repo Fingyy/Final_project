@@ -91,10 +91,26 @@ class SignUpForm(UserCreationForm):
         email = self.cleaned_data.get('email')
 
         # Zkontroluje, zda je e-mail v platném formátu
-        if email and not forms.EmailField().clean(email):
-            raise forms.ValidationError(_('Zadejte prosím platný e-mail.'))
+        if email:
+            try:
+                forms.EmailField().clean(email)  # Validate using Django's built-in validation
+            except forms.ValidationError:
+                raise forms.ValidationError(_('Zadejte prosím platný e-mail.'))
 
         return email
+
+    def save(self, commit=True):
+        user = super().save(commit)
+        if commit:
+            user.save()  # Uloží uživatele
+            # Vytvoří profil
+            Profile.objects.create(
+                user=user,
+                first_name=self.cleaned_data.get('first_name'),
+                last_name=self.cleaned_data.get('last_name'),
+
+            )
+        return user
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -25,6 +25,19 @@ from reportlab.lib.pagesizes import A4
 logger = logging.getLogger(__name__)
 
 
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Automaticky přihlásí uživatele po registraci
+
+            return redirect('home')  # Vrácení na homepage
+    else:
+        form = SignUpForm()
+    return render(request, 'user/signup.html', {'form': form})
+
+
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'user/profile_detail.html'
 
@@ -46,6 +59,21 @@ class SubmittablePasswordChangeView(PasswordChangeView):
     template_name = 'user/password_change_form.html'
     success_url = reverse_lazy('profile_detail')
     form_class = CustomPasswordChangeForm
+
+
+@login_required
+def edit_profile(request):
+    profile = Profile.objects.get(user=request.user)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile_detail')
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, 'user/edit_profile.html', {'form': form})
 
 
 class BaseView(TemplateView):
@@ -369,32 +397,6 @@ class ItemOnStockDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
     def test_func(self):
         return self.request.user.is_superuser or self.request.user.groups.filter(name='stock_admin').exists()
 
-@login_required
-def edit_profile(request):
-    profile = Profile.objects.get(user=request.user)
-
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            return redirect('profile_detail')
-    else:
-        form = ProfileForm(instance=profile)
-
-    return render(request, 'user/edit_profile.html', {'form': form})
-
-
-def signup(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)  # Automaticky přihlásí uživatele po registraci
-            return redirect('home')
-    else:
-        form = SignUpForm()
-    return render(request, 'user/signup.html', {'form': form})
-
 
 class AddToCartView(LoginRequiredMixin, View):
     def get(self, request, television_id):
@@ -487,6 +489,7 @@ class CheckoutView(LoginRequiredMixin, FormView):
     #     super().__init__(kwargs)
     #     self.order = None
     """Přesměrování, pokud je košík prázdný"""
+
     def dispatch(self, request, *args, **kwargs):
         cart = self.request.session.get('cart', {})
         if not cart:
@@ -494,12 +497,14 @@ class CheckoutView(LoginRequiredMixin, FormView):
         return super().dispatch(request, *args, **kwargs)
 
     """Úspěšné přesměrování po odeslání formuláře"""
+
     def get_success_url(self):
         return reverse('order_success', kwargs={'order_id': self.order.order_id})
 
     """
     Inicializace formuláře s údaji uživatele
     """
+
     def get_initial(self):
         initial = super().get_initial()
         user = self.request.user
@@ -524,7 +529,7 @@ class CheckoutView(LoginRequiredMixin, FormView):
     """Logika po úspěšném odeslání formuláře (zpracování objednávky)"""
 
     def form_valid(self, form):
-        self.order = form.save(commit=False) # Vytvoření objednávky, ale zatím neuložíme
+        self.order = form.save(commit=False)  # Vytvoření objednávky, ale zatím neuložíme
         self.order.user = self.request.user  # Priradime uzivatele k objednávce
         self.order.price = 0  # Inicializace celkové ceny na 0
         self.order.save()  # Nejprve ulozime objednavku
@@ -557,7 +562,7 @@ class CheckoutView(LoginRequiredMixin, FormView):
         self.order.status = 'submitted'
         self.order.save()
 
-        self.request.session['cart'] = {} # Vyčištění košíku
+        self.request.session['cart'] = {}  # Vyčištění košíku
         return super().form_valid(form)
 
 
@@ -629,6 +634,7 @@ def terms_view(request):
 
 class TermsView(TemplateView):
     template_name = 'terms.html'
+
 
 def generate_order_pdf(request, order_id):
     order = get_object_or_404(Order, order_id=order_id)
