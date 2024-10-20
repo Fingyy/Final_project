@@ -22,9 +22,9 @@
                     {% endfor %}
                 </ul>
         </div>
-    <a href="{% url 'order_list' %}" class="btn btn-outline-secondary">Zpátky na se seznam objednávek</a>
+    <a href="{% url 'order_list' %}" class="btn btn-outline-secondary">Zpět</a>
+    <a href="{% url 'order_pdf' order.order_id %}" class="btn btn-outline-info">PDF</a>
     {% if user.is_superuser %}
-{#                <a href="{% url 'tv_update' television.pk %}" class="btn btn-warning">Edit</a>#}
                 <a href="{% url 'order_delete' order_id=order.order_id  %}" class="btn btn-outline-danger">Smazat</a>
             {% endif %}
 {% endblock %}

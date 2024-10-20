@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 
 from viewer.views import (BaseView, TVDetailView, TVListView, TVCreateView, TVUpdateView, TVDeleteView,
                           FilteredTelevisionListView, ProfileView, SubmittableLoginView, CustomLogoutView,
-                          SubmittablePasswordChangeView, MobileListView, OrderSuccessView, OrderDeleteView,
+                          SubmittablePasswordChangeView, OrderSuccessView, OrderDeleteView, generate_order_pdf,
                           OrderListView, OrderDetailView, AddToCartView, RemoveFromCartView, CartView, CheckoutView,
                           edit_profile, signup, BrandCreateView, SearchResultsView, ItemOnStockListView,
                           ItemOnStockCreateView, ItemOnStockUpdateView, ItemOnStockDeleteView, BrandDeleteView,
@@ -28,12 +28,10 @@ from viewer.views import (BaseView, TVDetailView, TVListView, TVCreateView, TVUp
                           TVDisplayTechnologyDeleteView, TVDisplayResolutionDeleteView, TVOperationSystemDeleteView,
                           terms_view)
 from viewer.models import (Profile, Television, Brand, TVOperationSystem, TVDisplayResolution, TVDisplayTechnology,
-                           MobilePhone, MobileDisplay, MobileConstruction, MobileUserMemory, MobileRAM,
-                           MobileOperationSystem, Order, ItemsOnStock
+                           Order, ItemsOnStock
                            )
 
-admin.site.register([Television, Brand, TVDisplayResolution, TVDisplayTechnology, TVOperationSystem, MobilePhone,
-                     MobileDisplay, MobileConstruction, MobileUserMemory, MobileRAM, MobileOperationSystem, Profile,
+admin.site.register([Television, Brand, TVDisplayResolution, TVDisplayTechnology, TVOperationSystem, Profile,
                      Order, ItemsOnStock])
 
 urlpatterns = [
@@ -67,8 +65,6 @@ urlpatterns = [
     path('tv/oper-system/<str:op_system>/', FilteredTelevisionListView.as_view(), name='filtered_tv_by_op_system'),
     path('tv/brand/<str:brand>/technology/<str:technology>/', FilteredTelevisionListView.as_view(),
          name='filtered_tv_by_brand_and_technology'),
-    # ----------------Mobil sekce----------------
-    path('mobile', MobileListView.as_view(), name='mobile_list'),
     # ----------------Sklad sekce----------------
     path('stock', ItemOnStockListView.as_view(), name='stock_list'),
     path('stock/create/', ItemOnStockCreateView.as_view(), name='item_on_stock_create'),
@@ -80,6 +76,7 @@ urlpatterns = [
     path('cart/', CartView.as_view(), name='view_cart'),
     path('checkout/', CheckoutView.as_view(), name='checkout'),
     path('order/success/<uuid:order_id>/', OrderSuccessView.as_view(), name='order_success'),
+    path('order/pdf/<uuid:order_id>/', generate_order_pdf, name='order_pdf'),
     path('orders/', OrderListView.as_view(), name='order_list'),
     path('order/<uuid:order_id>/', OrderDetailView.as_view(), name='order_detail'),
     path('order/delete/<uuid:order_id>/', OrderDeleteView.as_view(), name='order_delete'),
