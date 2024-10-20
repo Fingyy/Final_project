@@ -63,6 +63,8 @@
             <p>Operační systém: {{ television.operation_system }}</p>
             {% if user.is_authenticated and item_on_stock.quantity > 0 %}
                 <a href="{% url 'add_to_cart' television.pk %}" class="btn btn-success">Do košíku</a>
+            {% else %}
+                <button class="btn btn-secondary" disabled>Nedostupné</button>
             {% endif %}
             {% if is_tv_admin or user.is_superuser %}
                 <a href="{% url 'tv_update' television.pk %}" class="btn btn-warning">Edit</a>

@@ -6,18 +6,26 @@
     <a href="{% url 'tv_list' %}">< Všechny televize</a>
     <br><br>
 {% if selected_smart != 'All' %}
-    <h1>Smart televize: {{ selected_smart }}</h1>
+    <h1>Chytré televize</h1>
+    {% if selected_smart == 'smart' %}
+        <p>Pokud vám nestačí základní nabídka programů nebo se rádi díváte na videa na internetu, využijete chytrou 
+            televizi, tzv. Smart TV. Ta propojuje klasické vysílání s počítačem, chytrým telefonem nebo tabletem, abyste
+            si kdykoli dokázali najít pořad, který vás zajímá.
+        </p>
+    {% endif %}
 {% endif %}
 {% if selected_technology != 'All' %}
     <h1>Televize s technologií: {{ selected_technology }}</h1>
     {% if selected_technology == 'OLED' %}
         <p>OLED televize dokážou měnit intenzitu podsvícení na každém pixelu. Jejich podání černé barvy je 
             bezkonkurenční, což se odráží i na vyšších hodnotách kontrastu – jsou proto výborné pro sledování filmů. 
-            OLED TV vyniká také maximální kvalitou obrazu a minimální spotřebou energie.</p>
+            OLED TV vyniká také maximální kvalitou obrazu a minimální spotřebou energie.
+        </p>
     {% endif %}
     {% if selected_technology == 'QLED' %}
         <p>Hledáte špičkový televizor, který se stane dominantou vašeho obýváku, multimediálním centrem celé domácnosti,
-            ale především vám zajistí obraz i zvuk jako v kině? Pak je QLED jasnou volbou!</p>
+            ale především vám zajistí obraz i zvuk jako v kině? Pak je QLED jasnou volbou!
+        </p>
     {% endif %}
 {% endif %}
 {% if selected_resolution != 'All' %}
@@ -25,11 +33,13 @@
     {% if selected_resolution == '8K Ultra HD' %}
         <p>Pořiďte si do obývacího pokoje 8K televizi a získáte takové šikovné domácí kino. 8K televize mají rozlišení 
             7680 × 4320 pixelů, což je aktuálně nejjemnější rozlišení UHD televizorů obecně. Pixely jsou tak malé, že 
-            je nerozlišíte ani zblízka, takže vás čeká skutečně pohlcující divácký zážitek.</p>
+            je nerozlišíte ani zblízka, takže vás čeká skutečně pohlcující divácký zážitek.
+        </p>
     {% endif %}
     {% if selected_resolution == '4K Ultra HD' %}
         <p>Ultra HD znamená vysoké rozlišení a tedy schopnost zobrazit více detailů. Obraz na takové televizi se skládá
-            ze čtyřnásobného počtu pixelů oproti Full HD, takže si i pouhým okem všimnete rozdílu. </p>
+            ze čtyřnásobného počtu pixelů oproti Full HD, takže si i pouhým okem všimnete rozdílu. 
+        </p>
     {% endif %}
 {% endif %}
     {% if selected_op_system != 'All' %}
@@ -38,13 +48,48 @@
             <p>Hledáte kvalitní televizi, která by nebyla pouze zdrojem TV signálu, ale i multimediálním centrem celé 
                 domácnosti? Pak vsaďte na televizory s operačním systémem Android, se kterými budete moci sdílet videa 
                 z YouTube, sledovat filmy z Netflixu a dalších služeb nebo si prohlížet fotky a videa pořízené vaším 
-                smartphonem. </p>
+                smartphonem. 
+            </p>
         {% endif %}
     {% endif %}
 
 <ul>
   {% for television in televisions %}
-    <li><a href="{% url 'tv_detail' television.pk %}">{{ television.brand }} {{ television.brand_model }} - {{ television.tv_screen_size }}"</a></li>
+    <tr style="display: flex; justify-content: space-between;"> <!-- Flexbox pro rozložení -->
+                    <!-- Detaily televizoru, které zabírají 70 % -->
+                    <td style="flex: 70%; border: 1px solid white; padding-right: 20px;"> <!-- Ohraničení a rozdělení prostoru -->
+                        <a href="{% url 'tv_detail' television.pk %}">
+                            <span style="font-size: 130%;">
+                                {{ television }} 
+                            </span>
+                        </a>
+                        <br>
+                        <span style="font-size: 90%; color: gray;">
+                            {{ television.description|slice:":500" }}...
+                        </span>
+                        <br>
+                        <br>
+                        <!-- Zobrazení tlačítka "Do košíku" pokud je zásoba k dispozici -->
+                        {% if user.is_authenticated and television.item_on_stock and television.item_on_stock.quantity > 0 %}
+                            <a href="{% url 'add_to_cart' television.pk %}" class="btn btn-success">Do košíku</a>
+                        {% else %}
+                            <button class="btn btn-secondary" disabled>Nedostupné</button>
+                        {% endif %}
+                    </td>
+
+                    <!-- Obrázek televizoru, který zabírá 30 % -->
+                     <td style="flex: 30%;">
+                        <div class="tv-image" style="padding-right: 20px;">
+                            {% if television.image %}
+                                <img src="{{ television.image.url }}" alt="missing picture of {{ television.brand }} {{ television.brand_model }}" style="width: 100%; max-width: 350px; height: auto;">
+                            {% else %}
+                                <div style="width: 100%; height: 150px; background-color: #ccc; display: flex; align-items: center; justify-content: center;">
+                                    <p>No Image Available</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
   {% empty %}
     <li>Žádné televize nenalezeny.</li>
   {% endfor %}

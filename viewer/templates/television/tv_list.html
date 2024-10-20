@@ -1,18 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 
-<!-- Přidání CSS přímo do šablony -->
-{#{% block head %}#}
-{#<style>#}
-{#.scrollable-checkboxes {#}
-{#    max-height: 400px; /* Nastavení maximální výšky */#}
-{#    overflow-y: auto;  /* Vertikální scrollování */#}
-{#    padding: 10px;#}
-{#    border: 1px solid #ccc;#}
-{#    background-color: #CC0000;#}
-
-{#</style>#}
-{#{% endblock %}#}
 {% block content %}
 <div class="container">
     <div class="row">
@@ -144,7 +132,7 @@
                     <!-- Detaily televizoru, které zabírají 70 % -->
                     <td style="flex: 70%; border: 1px solid white; padding-right: 20px;"> <!-- Ohraničení a rozdělení prostoru -->
                         <a href="{% url 'tv_detail' television.pk %}">
-                            {{ television.brand }} ({{ television.brand_model }})
+                            {{ television }} 
                         </a>
                         <br>
                         <span style="font-size: 70%; color: gray;">
@@ -155,6 +143,8 @@
                         <!-- Zobrazení tlačítka "Do košíku" pokud je zásoba k dispozici -->
                         {% if user.is_authenticated and television.item_on_stock and television.item_on_stock.quantity > 0 %}
                             <a href="{% url 'add_to_cart' television.pk %}" class="btn btn-success">Do košíku</a>
+                        {% else %}
+                            <button class="btn btn-secondary" disabled>Nedostupné</button>
                         {% endif %}
                     </td>
 
