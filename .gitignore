@@ -1,4 +1,6 @@
 /.idea/Final_project.iml
 /.idea/
 db.sqlite3
+__pycache__/
+*.pyc
 
