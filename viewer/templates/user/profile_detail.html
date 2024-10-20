@@ -5,10 +5,10 @@
     <h2>Profil</h2>
     <div class="mb-4"></div>
 
-    {% if user.profile.profile_picture %}
-        <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" style="width: 150px; height: auto;" class="img-thumbnail mb-3">
+    {% if user.profile.avatar %}
+        <img src="{{ user.profile.avatar.url }}" alt="Profile Picture" style="width: 150px; height: auto;" class="img-thumbnail mb-3">
     {% else %}
-        <img src="{% static '/media/avatars/profile_pic.png' %}" alt="Default Profile Picture" style="width: 150px; height: auto;" class="img-thumbnail mb-3">
+        <img src="{% static 'media/avatars/profile_pic.png' %}" alt="Default Profile Picture" style="width: 150px; height: auto" class="img-thumbnail mb-3">
     {% endif %}
     
     <h4>{{ user.profile.first_name }} {{ user.profile.last_name }}</h4>

@@ -168,7 +168,7 @@
             <br>
             <!-- Tlacitko viditelne pro prihlasene a zaroven pro superuzivatele nebo cleny skupiny tv_admin -->
             {% if is_tv_admin or user.is_superuser %}
-                <a href="{% url 'tv_create' %}" class="btn btn-success">Přidat TV</a>
+                <a href="{% url 'tv_create' %}" class="btn btn-warning">Přidat TV</a>
             {% endif %}
         </div>
     </div>

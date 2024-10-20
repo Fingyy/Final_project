@@ -10,8 +10,8 @@
       <div class="col-sm-10">
         {{ form.brand.errors }}
         {{ form.brand }}
-          <a href="{% url 'brand_create' %}" class="btn btn-secondary btn-sm">Přidat</a>
-          <a href="{% url 'brand_delete' %}" class="btn btn-secondary btn-sm">Smazat</a>
+          <a href="{% url 'brand_create' %}" class="btn btn-info btn-sm">Přidat</a>
+          <a href="{% url 'brand_delete' %}" class="btn btn-danger btn-sm">Smazat</a>
       </div>
     </div>
   
@@ -60,8 +60,8 @@
       <div class="col-sm-10">
         {{ form.display_technology.errors }}
         {{ form.display_technology }}
-        <a href="{% url 'technology_create' %}" class="btn btn-secondary btn-sm">Přidat</a>
-        <a href="{% url 'technology_delete' %}" class="btn btn-secondary btn-sm">Smazat</a>
+        <a href="{% url 'technology_create' %}" class="btn btn-info btn-sm">Přidat</a>
+        <a href="{% url 'technology_delete' %}" class="btn btn-danger btn-sm">Smazat</a>
       </div>
     </div>
 
@@ -70,8 +70,8 @@
       <div class="col-sm-10">
         {{ form.display_resolution.errors }}
         {{ form.display_resolution }}
-        <a href="{% url 'resolution_create' %}" class="btn btn-secondary btn-sm">Přidat</a>
-        <a href="{% url 'resolution_delete' %}" class="btn btn-secondary btn-sm">Smazat</a>
+        <a href="{% url 'resolution_create' %}" class="btn btn-info btn-sm">Přidat</a>
+        <a href="{% url 'resolution_delete' %}" class="btn btn-danger btn-sm">Smazat</a>
       </div>
     </div>
 
@@ -80,8 +80,8 @@
       <div class="col-sm-10">
         {{ form.operation_system.errors }}
         {{ form.operation_system }}
-        <a href="{% url 'system_create' %}" class="btn btn-secondary btn-sm">Přidat</a>
-        <a href="{% url 'system_delete' %}" class="btn btn-secondary btn-sm">Smazat</a> 
+        <a href="{% url 'system_create' %}" class="btn btn-info btn-sm">Přidat</a>
+        <a href="{% url 'system_delete' %}" class="btn btn-danger btn-sm">Smazat</a> 
       </div>
     </div>
       
@@ -109,7 +109,7 @@
       </div>
     </div>
 
-    <input type="submit" value="Potvrdit" class="btn btn-primary">
+    <input type="submit" value="Potvrdit" class="btn btn-success">
     {% if television.pk %}
       <a href="{% url 'tv_detail' television.pk %}" class="btn btn-secondary">Zpět</a>
     {% else %}

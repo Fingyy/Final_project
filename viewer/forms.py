@@ -262,6 +262,8 @@ class ProfileForm(forms.ModelForm):
             'communication_channel': _('Komunikační kanál'),
         }
 
+    avatar = forms.ImageField(required=False)
+
     date_of_birth = forms.DateField(
         required=False,
         input_formats=['%Y-%m-%d'],  # Zbezpeci, aby byl pouzit spravny format

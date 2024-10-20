@@ -181,7 +181,7 @@ class Profile(models.Model):
     address = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=25, blank=True, validators=[alpha_validator])
     zipcode = models.CharField(max_length=5, blank=True, validators=[zipcode_validator])
-    avatar = models.ImageField(upload_to='avatars/', default='media/avatars/profile_pic.png', blank=True, null=True)
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/profile_pic.png', blank=True, null=True)
     communication_channel = models.CharField(max_length=10, choices=communication_channel_choices, default='Email')
 
     @property
