@@ -245,11 +245,19 @@ class TVListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        # Kontrola, zda uživatel patří do skupiny 'tv_admin', pokud je přihlášen (pro podminkovani v html)
+        # Kontrola, zda uživatel patří do skupiny 'tv_admin'
         context['is_tv_admin'] = user.groups.filter(name='tv_admin').exists()
+
+        # Předání vybraných filtrů do kontextu
         context['selected_brand'] = self.request.GET.getlist('brand')
         context['selected_technology'] = self.request.GET.getlist('technology')
         context['selected_resolution'] = self.request.GET.getlist('resolution')
+
+        # Pro každou televizi přidáme odpovídající položku zásob
+        televisions = context['object_list']
+        for television in televisions:
+            item_on_stock = ItemsOnStock.objects.filter(television_id=television.id).first()
+            television.item_on_stock = item_on_stock
         return context
 
 

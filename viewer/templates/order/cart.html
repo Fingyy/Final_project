@@ -6,23 +6,25 @@
         {% if cart.items%}
             {% for television_id, item in cart.items %}
                 <li>
-                    <div>{{ item.name }} {{ item.model }} za {{ item.price }} Kč</div>
+                    <div style="font-size: 120%;">
+                        <strong>{{ item.name }} {{ item.model }} za {{ item.price|floatformat:0 }} Kč</strong>
+                    </div>
                 
                     <form action="{% url 'remove_from_cart' television_id %}" method="post" style="display: inline;">
                         {% csrf_token %}
-                        <button type="submit">-</button> 
+                        <button type="submit" class="btn btn-danger btn-sm">-</button> 
                     </form>
                     
                     <form action="{% url 'add_to_cart' television_id %}" method="get" style="display: inline;">
                         {% csrf_token %}
-                        <button type="submit">+</button> 
+                        <button type="submit" class="btn btn-success btn-sm">+</button> 
                         <input type="hidden" name="from_cart" value="true"> 
                     </form>
                     <div></div>Množství v košíku {{ item.quantity }} x</li>
             {% endfor %}
         </ul>
         <p>Počet položek: {{ total_items }}</p>
-        <p>Celková cena: {{ total_price }} Kč</p>
+        <p>Celková cena: <strong>{{ total_price|floatformat:0 }} Kč</strong></p>
         <a href="{% url 'checkout' %}" class="btn btn-outline-dark">Přejít na kontaktní údaje</a>
             {% else %}
             <div>Košík neobsahuje žádné položky.</div>

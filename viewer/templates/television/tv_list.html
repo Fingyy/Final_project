@@ -140,23 +140,39 @@
                 </div>
             </div>
             {% for television in object_list %}
-            <tr>
-                <td class="border border-white"> <!-- Doplňovat třídy border pro bílé ohraničení -->
-                    {{ television.name }} <!-- Zde by mělo být vaše zobrazení -->
-                    <tr>
-                        <td>
-                            <!-- Název televizoru -->
-                            <a href="{% url 'tv_detail' television.pk %}">
-                                {{ television.brand }} ({{ television.brand_model }})
-                            </a>
-                            <br>
-                            <!-- Popis televizoru menším písmem -->
-                            <span style="font-size: 70%; color: gray;">
-                                {{ television.description|slice:":50" }}...
-                            </span>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                <tr style="display: flex; justify-content: space-between;"> <!-- Flexbox pro rozložení -->
+                    <!-- Detaily televizoru, které zabírají 70 % -->
+                    <td style="flex: 70%; border: 1px solid white; padding-right: 20px;"> <!-- Ohraničení a rozdělení prostoru -->
+                        <a href="{% url 'tv_detail' television.pk %}">
+                            {{ television.brand }} ({{ television.brand_model }})
+                        </a>
+                        <br>
+                        <span style="font-size: 70%; color: gray;">
+                            {{ television.description|slice:":300" }}...
+                        </span>
+                        <br>
+                        <br>
+                        <!-- Zobrazení tlačítka "Do košíku" pokud je zásoba k dispozici -->
+                        {% if user.is_authenticated and television.item_on_stock and television.item_on_stock.quantity > 0 %}
+                            <a href="{% url 'add_to_cart' television.pk %}" class="btn btn-success">Do košíku</a>
+                        {% endif %}
+                    </td>
+
+                    <!-- Obrázek televizoru, který zabírá 30 % -->
+                     <td style="flex: 30%;">
+                        <div class="tv-image" style="padding-right: 20px;">
+                            {% if television.image %}
+                                <img src="{{ television.image.url }}" alt="missing picture of {{ television.brand }} {{ television.brand_model }}" style="width: 100%; max-width: 350px; height: auto;">
+                            {% else %}
+                                <div style="width: 100%; height: 150px; background-color: #ccc; display: flex; align-items: center; justify-content: center;">
+                                    <p>No Image Available</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+
                 </tbody>
             </table>
             <br>
