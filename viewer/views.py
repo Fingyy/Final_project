@@ -389,7 +389,7 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Automatically log the user in after registration
+            login(request, user)  # Automaticky přihlásí uživatele po registraci
             return redirect('home')
     else:
         form = SignUpForm()

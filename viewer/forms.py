@@ -24,12 +24,12 @@ class CustomPasswordChangeForm(PasswordChangeForm):
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
 
-    # Overriding field labels
+    # Pole pro zadání starého anového hesla
     old_password = forms.CharField(label=_("Staré heslo"), widget=forms.PasswordInput)
     new_password1 = forms.CharField(label=_("Nové heslo"), widget=forms.PasswordInput)
     new_password2 = forms.CharField(label=_("Potvrďte nové heslo"), widget=forms.PasswordInput)
 
-    # Overriding the error messages
+    # Chybová zpráva pokud se staré a nové heslo neshodují
     def clean_new_password2(self):
         password1 = self.cleaned_data.get('new_password1')
         password2 = self.cleaned_data.get('new_password2')
@@ -44,8 +44,8 @@ class SignUpForm(UserCreationForm):
         min_length=3,
         max_length=20,
         help_text=_(
-            'Toto pole je povinné. Uživatelské jméno musí být jediněčné, obsahovat minimálně 3 a maximálně 20 znaků, '
-            'pouze písmena, číslice a @/./+/-/_ znaky.')
+            'Toto pole je povinné. Uživatelské jméno musí být jediněčné, může obsahovat 3 až 20 znaků: '
+            'písmena, číslice a @/./+/-/_ znaky.')
     )
     first_name = forms.CharField(label=_('Jméno'), required=False, )
     last_name = forms.CharField(label=_('Příjmení'), required=False, )
@@ -80,7 +80,7 @@ class SignUpForm(UserCreationForm):
         if len(username) < 3:
             raise forms.ValidationError(_('Uživatelské jméno nesmí být kratší než 3 znaky.'))
 
-        # Vlastní regulární výraz pro kontrolu platnosti uživatelského jména
+        # Regulární výraz pro kontrolu platnosti uživatelského jména
         if not re.match(r'^[\w.@+-]+$', username):
             raise forms.ValidationError(
                 _('Uživatelské jméno může obsahovat pouze písmena, číslice, a znaky @/./+/-/_.'))
@@ -134,9 +134,9 @@ class TVOperationSystemForm(forms.ModelForm):
 
 class BrandDeleteForm(forms.Form):
     brand = forms.ModelChoiceField(
-        queryset=Brand.objects.all(),  # Fetch all brands for the dropdown
-        widget=forms.Select,  # Dropdown widget
-        empty_label="Select a brand"  # Display a prompt at the top
+        queryset=Brand.objects.all(),
+        widget=forms.Select,
+        empty_label="Select a brand"
     )
 
 
