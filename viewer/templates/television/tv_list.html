@@ -22,7 +22,7 @@
             <div class="scrollable-checkboxes">
                 <form action="{% url 'tv_list' %}" method="GET">
                     <fieldset>
-                        <legend>Znacky</legend>
+                        <legend>Značky</legend>
 
                         <input type="checkbox" 
                                name="brand" 
@@ -50,12 +50,13 @@
                                id="brand_checkbox4" 
                                value="JVC" {% if 'JVC' in selected_brand %}checked{% endif %}>
                         <label for="brand_checkbox4">JVC</label>
+                        <br>
                         
                         <legend>Technologie</legend>
 
-                        <input type="checkbox" 
-                               name="technology" 
-                               id="technology_checkbox1" 
+                        <input type="checkbox"
+                               name="technology"
+                               id="technology_checkbox1"
                                value="LED" {% if 'LED' in selected_technology %}checked{% endif %}>
                         <label for="technology_checkbox1">LED</label>
                         <br>
@@ -158,10 +159,8 @@
             </table>
             <br>
             <!-- Tlacitko viditelne pro prihlasene a zaroven pro superuzivatele nebo cleny skupiny tv_admin -->
-            {% if user.is_authenticated and user.is_superuser %}
-                <a href="{% url 'tv_create' %}" class="btn btn-success">Add TV</a>
-            {% elif user.is_authenticated and is_tv_admin %}
-                <a href="{% url 'tv_create' %}" class="btn btn-success">Add TV</a>
+            {% if is_tv_admin or user.is_superuser %}
+                <a href="{% url 'tv_create' %}" class="btn btn-success">Přidat TV</a>
             {% endif %}
         </div>
     </div>

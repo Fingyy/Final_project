@@ -75,7 +75,7 @@
     <!-- Obrazek -->
     <div class="tv-image" style="flex-shrink: 0; padding-right: 20px;">
         {% if television.image %}
-            <img src="{{ television.image.url }}" alt="missing picture of {{ television.brand }} {{ television.brand_model }}" width="350" height="350">
+            <img src="{{ television.image.url }}" alt="missing picture of {{ television.brand }} {{ television.brand_model }}" style="max-width: 100%; width: 100%; max-width: 350px; height: auto;">
         {% else %}
             <div style="width: 350px; height: 350px; background-color: #ccc; display: flex; align-items: center; justify-content: center;">
                 <p>No Image Available</p>

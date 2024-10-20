@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from django.contrib.auth.models import User
 import time
 
+
 class MySeleniumTests(LiveServerTestCase):
     @classmethod
     def setUpClass(cls):

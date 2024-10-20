@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from viewer.models import Profile, Television, MobilePhone, Order, Brand, ItemsOnStock, TVDisplayTechnology, \
+from viewer.models import Profile, Television, Order, Brand, ItemsOnStock, TVDisplayTechnology, \
     TVDisplayResolution, TVOperationSystem
 
 
@@ -160,12 +160,7 @@ class TVOperationSystemDeleteForm(forms.Form):
     tv_system = forms.ModelChoiceField(
         queryset=TVOperationSystem.objects.all(),
         widget=forms.Select,
-        empty_label="Select an Operation System"
-    )
-class MobileForm(forms.ModelForm):
-    class Meta:
-        model = MobilePhone
-        fields = '__all__'
+        empty_label="Select an Operation System")
 
 
 class ItemOnStockForm(forms.ModelForm):
