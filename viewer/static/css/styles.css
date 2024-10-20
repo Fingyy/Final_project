@@ -101,4 +101,34 @@ body {
 
 .card-footer {
     text-align: right; /* Zarovnání textu v patičce karty doprava */
+
+#clock-date-container {
+    margin-top: 40px; /* Větší mezera od horního obsahu */
+}
+
+#clock-date-container {
+    margin-top: 40px; /* Větší mezera od horního obsahu */
+}
+
+#clock, #date {
+    background-color: rgba(0, 0, 0, 0.5); /* Polotransparentní pozadí */
+    color: #ffffff; /* Barva textu bílá */
+    padding: 20px 40px; /* Větší vnitřní okraje pro lepší vzhled */
+    border-radius: 15px; /* Zaoblení rohů */
+    font-family: 'Arial', sans-serif; /* Použití moderního fontu */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6); /* Větší stín pro 3D efekt */
+    display: inline-block; /* Umožní centrování */
+    text-align: center; /* Uložení textu do středu */
+    min-height: 60px; /* Zajištění, že se kontejner nezmenší */
+}
+
+#clock {
+    font-size: 8rem; /* Zvětšená velikost pro hodiny */
+    margin-bottom: 10px; /* Mezera pod hodinami */
+}
+
+#date {
+    font-size: 6rem; /* Zvětšená velikost pro datum */
+    margin-bottom: 20px; /* Mezera pod datem */
+}
 }

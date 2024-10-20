@@ -10,43 +10,43 @@
         <p class="text-center text-white mb-4">Explore our latest electronic products!</p>
 
         <h1 class="text-center text-white mb-4" style="font-size: 1.5rem;">Doporučené produkty</h1>
-        
+
         <div class="row d-flex justify-content-around"> <!-- Změněno na justify-content-around -->
             <!-- Karta 1 -->
-<div class="col-auto mb-4">
-    <div class="card border-primary" style="width: 200px; height: 300px;">
-        <img src="{% static 'images/Panasonic TX-43.png' %}" class="card-img-top" alt="Produkt 1" style="height: 60%; width: 100%; object-fit: cover;">
-        <div class="card-body d-flex flex-column justify-content-between" style="height: 40%;">
-            <h5 class="card-title">Panasonic TX-43</h5>
-            <p class="card-text">Popis produktu 1.</p>
-            <a href="{% url 'tv_detail' pk=4 %}" class="btn btn-primary">Koupit</a>
-        </div>
-    </div>
-</div>
+            <div class="col-auto mb-4">
+                <div class="card border-primary" style="width: 200px; height: 300px;">
+                    <img src="{% static 'images/Panasonic TX-43.png' %}" class="card-img-top" alt="Produkt 1" style="height: 60%; width: 100%; object-fit: cover;">
+                    <div class="card-body d-flex flex-column justify-content-between" style="height: 40%;">
+                        <h5 class="card-title">Panasonic TX-43</h5>
+                        <p class="card-text">Popis produktu 1.</p>
+                        <a href="{% url 'tv_detail' pk=4 %}" class="btn btn-primary">Koupit</a>
+                    </div>
+                </div>
+            </div>
 
-<!-- Karta 2 -->
-<div class="col-auto mb-4">
-    <div class="card border-primary" style="width: 200px; height: 300px;">
-        <img src="{% static 'images/TLC 55C.png' %}" class="card-img-top" alt="Produkt 2" style="height: 60%; width: 100%; object-fit: cover;">
-        <div class="card-body d-flex flex-column justify-content-between" style="height: 40%;">
-            <h5 class="card-title">TLC 55C805</h5>
-            <p class="card-text">Popis produktu 2.</p>
-            <a href="{% url 'tv_detail' pk=7 %}" class="btn btn-primary">Koupit</a>
-        </div>
-    </div>
-</div>
+            <!-- Karta 2 -->
+            <div class="col-auto mb-4">
+                <div class="card border-primary" style="width: 200px; height: 300px;">
+                    <img src="{% static 'images/TLC 55C.png' %}" class="card-img-top" alt="Produkt 2" style="height: 60%; width: 100%; object-fit: cover;">
+                    <div class="card-body d-flex flex-column justify-content-between" style="height: 40%;">
+                        <h5 class="card-title">TLC 55C805</h5>
+                        <p class="card-text">Popis produktu 2.</p>
+                        <a href="{% url 'tv_detail' pk=7 %}" class="btn btn-primary">Koupit</a>
+                    </div>
+                </div>
+            </div>
 
-<!-- Karta 3 -->
-<div class="col-auto mb-4">
-    <div class="card border-primary" style="width: 200px; height: 300px;">
-        <img src="{% static 'images/sample-product3.png' %}" class="card-img-top" alt="Produkt 3" style="height: 60%; width: 100%; object-fit: cover;">
-        <div class="card-body d-flex flex-column justify-content-between" style="height: 40%;">
-            <h5 class="card-title">LG OLED55B46LA</h5>
-            <p class="card-text">Popis produktu 3.</p>
-            <a href="{% url 'tv_detail' pk=5 %}" class="btn btn-primary">Koupit</a>
-        </div>
-    </div>
-</div>
+            <!-- Karta 3 -->
+            <div class="col-auto mb-4">
+                <div class="card border-primary" style="width: 200px; height: 300px;">
+                    <img src="{% static 'images/sample-product3.png' %}" class="card-img-top" alt="Produkt 3" style="height: 60%; width: 100%; object-fit: cover;">
+                    <div class="card-body d-flex flex-column justify-content-between" style="height: 40%;">
+                        <h5 class="card-title">LG OLED55B46LA</h5>
+                        <p class="card-text">Popis produktu 3.</p>
+                        <a href="{% url 'tv_detail' pk=5 %}" class="btn btn-primary">Koupit</a>
+                    </div>
+                </div>
+            </div>
 
             <!-- Banner -->
             <div class="col-auto mb-4">
@@ -67,6 +67,18 @@
                 <img src="{% static 'images/free_shipping.png' %}" alt="Bezplatná doprava" class="icon">
             </div>
         </div>
+
+        <!-- Hodiny a datum umístěné pod ikonami -->
+        <div class="text-center" style="margin-top: 30px; margin-bottom: 20px;">
+            <div style="background-color: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 10px; display: inline-block; width: 100%; max-width: 300px; margin: 0 auto; min-height: 100px;">
+                <h2 id="clock" style="color: #ffffff; margin: 0; font-size: 3rem;">00:00</h2>
+                <h2 id="date" style="color: #ffffff; margin: 0; font-size: 2rem;">DD/MM/YYYY</h2>
+            </div>
+        </div>
+
+        <!-- Zahrnutí externího souboru clock.js -->
+        <script src="{% static 'js/clock.js' %}"></script>
+
     </div>
 </body>
 {% endblock %}
