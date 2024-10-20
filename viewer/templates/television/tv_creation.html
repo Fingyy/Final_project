@@ -6,12 +6,12 @@
     {{ form.non_field_errors }}
 
    <div class="row mb-3">
-      <label for="{{ form.brand.id_for_label }}" class="col-sm-2 col-form-label">Brand:</label>
+      <label for="{{ form.brand.id_for_label }}" class="col-sm-2 col-form-label">Značka:</label>
       <div class="col-sm-10">
         {{ form.brand.errors }}
         {{ form.brand }}
-          <a href="{% url 'brand_create' %}" class="btn btn-secondary btn-sm">Add</a>
-          <a href="{% url 'brand_delete' %}" class="btn btn-secondary btn-sm">Delete</a>
+          <a href="{% url 'brand_create' %}" class="btn btn-secondary btn-sm">Přidat</a>
+          <a href="{% url 'brand_delete' %}" class="btn btn-secondary btn-sm">Smazat</a>
       </div>
     </div>
   
@@ -24,7 +24,7 @@
     </div>
 
     <div class="row mb-3">
-      <label for="{{ form.tv_released_year.id_for_label }}" class="col-sm-2 col-form-label">Released year:</label>
+      <label for="{{ form.tv_released_year.id_for_label }}" class="col-sm-2 col-form-label">Modelový rok:</label>
       <div class="col-sm-10">
         {{ form.tv_released_year.errors }}
         {{ form.tv_released_year }}
@@ -32,7 +32,7 @@
     </div>
 
     <div class="row mb-3">
-      <label for="{{ form.tv_screen_size.id_for_label }}" class="col-sm-2 col-form-label">Screen size:</label>
+      <label for="{{ form.tv_screen_size.id_for_label }}" class="col-sm-2 col-form-label">Velikost obrazovky:</label>
       <div class="col-sm-10">
         {{ form.tv_screen_size.errors }}
         {{ form.tv_screen_size }}
@@ -40,7 +40,7 @@
     </div>
 
     <div class="row mb-3">
-      <label for="{{ form.smart_tv.id_for_label }}" class="col-sm-2 col-form-label">Smart TV:</label>
+      <label for="{{ form.smart_tv.id_for_label }}" class="col-sm-2 col-form-label">Chytrá televize:</label>
       <div class="col-sm-10">
         {{ form.smart_tv.errors }}
         {{ form.smart_tv }}
@@ -48,7 +48,7 @@
     </div>
 
     <div class="row mb-3">
-      <label for="{{ form.refresh_rate.id_for_label }}" class="col-sm-2 col-form-label">Refresh rate:</label>
+      <label for="{{ form.refresh_rate.id_for_label }}" class="col-sm-2 col-form-label">Obnovovací frekvence:</label>
       <div class="col-sm-10">
         {{ form.refresh_rate.errors }}
         {{ form.refresh_rate }}
@@ -56,37 +56,37 @@
     </div>
 
     <div class="row mb-3">
-      <label for="{{ form.display_technology.id_for_label }}" class="col-sm-2 col-form-label">Display technology:</label>
+      <label for="{{ form.display_technology.id_for_label }}" class="col-sm-2 col-form-label">Technologie:</label>
       <div class="col-sm-10">
         {{ form.display_technology.errors }}
         {{ form.display_technology }}
-        <a href="{% url 'technology_create' %}" class="btn btn-secondary btn-sm">Add</a>
-        <a href="{% url 'technology_delete' %}" class="btn btn-secondary btn-sm">Delete</a>
+        <a href="{% url 'technology_create' %}" class="btn btn-secondary btn-sm">Přidat</a>
+        <a href="{% url 'technology_delete' %}" class="btn btn-secondary btn-sm">Smazat</a>
       </div>
     </div>
 
     <div class="row mb-3">
-      <label for="{{ form.display_resolution.id_for_label }}" class="col-sm-2 col-form-label">Display resolution:</label>
+      <label for="{{ form.display_resolution.id_for_label }}" class="col-sm-2 col-form-label">Rozlišení displeje:</label>
       <div class="col-sm-10">
         {{ form.display_resolution.errors }}
         {{ form.display_resolution }}
-        <a href="{% url 'resolution_create' %}" class="btn btn-secondary btn-sm">Add</a>
-        <a href="{% url 'resolution_delete' %}" class="btn btn-secondary btn-sm">Delete</a>
+        <a href="{% url 'resolution_create' %}" class="btn btn-secondary btn-sm">Přidat</a>
+        <a href="{% url 'resolution_delete' %}" class="btn btn-secondary btn-sm">Smazat</a>
       </div>
     </div>
 
     <div class="row mb-3">
-      <label for="{{ form.operation_system.id_for_label }}" class="col-sm-2 col-form-label">Operation system:</label>
+      <label for="{{ form.operation_system.id_for_label }}" class="col-sm-2 col-form-label">Operační systém:</label>
       <div class="col-sm-10">
         {{ form.operation_system.errors }}
         {{ form.operation_system }}
-        <a href="{% url 'system_create' %}" class="btn btn-secondary btn-sm">Add</a>
-        <a href="{% url 'system_delete' %}" class="btn btn-secondary btn-sm">Delete</a> 
+        <a href="{% url 'system_create' %}" class="btn btn-secondary btn-sm">Přidat</a>
+        <a href="{% url 'system_delete' %}" class="btn btn-secondary btn-sm">Smazat</a> 
       </div>
     </div>
       
       <div class="row mb-3">
-      <label for="{{ form.image.id_for_label }}" class="col-sm-2 col-form-label">Image:</label>
+      <label for="{{ form.image.id_for_label }}" class="col-sm-2 col-form-label">Obrázek:</label>
       <div class="col-sm-10">
         {{ form.image.errors }}
         {{ form.image }}
@@ -94,7 +94,7 @@
     </div>
       
       <div class="row mb-3">
-      <label for="{{ form.price.id_for_label }}" class="col-sm-2 col-form-label">Price:</label>
+      <label for="{{ form.price.id_for_label }}" class="col-sm-2 col-form-label">Cena:</label>
       <div class="col-sm-10">
         {{ form.price.errors }}
         {{ form.price }}
@@ -102,18 +102,18 @@
     </div>
 
     <div class="row mb-3">
-      <label for="{{ form.description.id_for_label }}" class="col-sm-2 col-form-label">Description:</label>
+      <label for="{{ form.description.id_for_label }}" class="col-sm-2 col-form-label">Popis:</label>
       <div class="col-sm-10">
         {{ form.description.errors }}
         {{ form.description }}
       </div>
     </div>
 
-    <input type="submit" value="Submit" class="btn btn-primary">
+    <input type="submit" value="Potvrdit" class="btn btn-primary">
     {% if television.pk %}
-      <a href="{% url 'tv_detail' television.pk %}" class="btn btn-secondary">Back</a>
+      <a href="{% url 'tv_detail' television.pk %}" class="btn btn-secondary">Zpět</a>
     {% else %}
-      <a href="{% url 'tv_list' %}" class="btn btn-secondary">Back</a>
+      <a href="{% url 'tv_list' %}" class="btn btn-secondary">Zpět</a>
     {% endif %}
   </form>
 {% endblock %}

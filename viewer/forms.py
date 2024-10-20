@@ -152,7 +152,7 @@ class BrandDeleteForm(forms.Form):
     brand = forms.ModelChoiceField(
         queryset=Brand.objects.all(),
         widget=forms.Select,
-        empty_label="Select a brand"
+        empty_label="Vybrat"
     )
 
 
@@ -160,7 +160,7 @@ class TVDisplayTechnologyDeleteForm(forms.Form):
     display_technology = forms.ModelChoiceField(
         queryset=TVDisplayTechnology.objects.all(),
         widget=forms.Select,
-        empty_label="Select a display technology"
+        empty_label="Vybrat"
     )
 
 
@@ -168,7 +168,7 @@ class TVDisplayResolutionDeleteForm(forms.Form):
     display_resolution = forms.ModelChoiceField(
         queryset=TVDisplayResolution.objects.all(),
         widget=forms.Select,
-        empty_label="Select a display resolution"
+        empty_label="Vybrat"
     )
 
 
@@ -176,7 +176,7 @@ class TVOperationSystemDeleteForm(forms.Form):
     tv_system = forms.ModelChoiceField(
         queryset=TVOperationSystem.objects.all(),
         widget=forms.Select,
-        empty_label="Select an Operation System")
+        empty_label="Vybrat")
 
 
 class ItemOnStockForm(forms.ModelForm):
