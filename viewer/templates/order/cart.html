@@ -12,10 +12,11 @@
                         {% csrf_token %}
                         <button type="submit">-</button> 
                     </form>
-                    {#  ?from_cart=true bam bude rozisovat, zda navysuju pocet ks z kosiku nebo ze stranky produktu #}
-                    <form action="{% url 'add_to_cart' television_id %}?from_cart=true" method="get" style="display: inline;">
+                    
+                    <form action="{% url 'add_to_cart' television_id %}" method="get" style="display: inline;">
                         {% csrf_token %}
-                        <button type="submit">+</button> {#  Jeste nefunguje #}
+                        <button type="submit">+</button> 
+                        <input type="hidden" name="from_cart" value="true"> 
                     </form>
                     <div></div>Množství v košíku {{ item.quantity }} x</li>
             {% endfor %}

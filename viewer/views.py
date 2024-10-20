@@ -439,7 +439,7 @@ class AddToCartView(LoginRequiredMixin, View):
         request.session['cart'] = cart
 
         # Kontrola, zda pridavame z kosiku nebo ze stranky televize
-        if request.GET.get('from_cart') == 'true':
+        if 'from_cart' in request.GET:
             return redirect('view_cart')
         else:
             return redirect('tv_detail', pk=television_id)
