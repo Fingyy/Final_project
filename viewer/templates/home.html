@@ -5,13 +5,13 @@
 
 {% block content %}
 <body style="background-image: url('{% static 'images/background.png' %}'); background-size: cover; background-position: center;">
-    <div class="container-fluid p-0"> <!-- Použita třída container-fluid a odstraněny okraje -->
+    <div class="container-fluid p-0">
         <h1 class="text-center text-white mb-4" style="font-size: 2.5rem;">Welcome to Online Shop</h1>
         <p class="text-center text-white mb-4">Explore our latest electronic products!</p>
 
         <h1 class="text-center text-white mb-4" style="font-size: 1.5rem;">Doporučené produkty</h1>
 
-        <div class="row d-flex justify-content-around"> <!-- Změněno na justify-content-around -->
+        <div class="row d-flex justify-content-around">
             <!-- Karta 1 -->
             <div class="col-auto mb-4">
                 <div class="card border-primary" style="width: 200px; height: 300px;">
@@ -50,11 +50,11 @@
 
             <!-- Banner -->
             <div class="col-auto mb-4">
-                <a href="{% url 'filtered_tv_by_resolution' '4K Ultra HD' %}"> <!-- Odkaz obalující celý banner -->
+                <a href="{% url 'filtered_tv_by_resolution' '4K Ultra HD' %}">
                     <div class="card border-primary" style="width: 600px; height: 250px;">
                         <img src="{% static 'images/banner.png' %}" class="card-img-top" alt="Banner" style="height: 100%; width: 100%; object-fit: cover;">
                         <div class="card-body" style="height: 40%;">
-                            <!-- Můžete přidat další obsah banneru zde, pokud chcete -->
+                        
                         </div>
                     </div>
                 </a>
@@ -70,7 +70,7 @@
             </div>
         </div>
 
-        <!-- Hodiny a datum umístěné pod ikonami -->
+        <!-- Hodiny a datum -->
         <div class="text-center" style="margin-top: 30px; margin-bottom: 20px;">
             <div style="background-color: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 10px; display: inline-block; width: 100%; max-width: 300px; margin: 0 auto; min-height: 100px;">
                 <h2 id="clock" style="color: #ffffff; margin: 0; font-size: 3rem;">00:00</h2>
@@ -78,7 +78,7 @@
             </div>
         </div>
 
-        <!-- Zahrnutí externího souboru clock.js -->
+        
         <script src="{% static 'js/clock.js' %}"></script>
 
     </div>
