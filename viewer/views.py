@@ -2,7 +2,9 @@ import logging
 
 from django.http import Http404, HttpResponseRedirect
 from django.views.generic import TemplateView, DetailView, ListView, CreateView, UpdateView, DeleteView, FormView, View
-from viewer.models import Television, MobilePhone, ItemsOnStock, Order, Profile, Brand, TVDisplayTechnology
+from poetry.console.commands import self
+
+from viewer.models import Television, ItemsOnStock, Order, Profile, OrderItem
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth import login
@@ -15,8 +17,25 @@ from viewer.forms import (TVForm, CustomAuthenticationForm, CustomPasswordChange
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib import messages
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
 
 logger = logging.getLogger(__name__)
+
+
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Automaticky přihlásí uživatele po registraci
+
+            return redirect('home')  # Vrácení na homepage
+    else:
+        form = SignUpForm()
+    return render(request, 'user/signup.html', {'form': form})
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):
@@ -40,6 +59,21 @@ class SubmittablePasswordChangeView(PasswordChangeView):
     template_name = 'user/password_change_form.html'
     success_url = reverse_lazy('profile_detail')
     form_class = CustomPasswordChangeForm
+
+
+@login_required
+def edit_profile(request):
+    profile = Profile.objects.get(user=request.user)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile_detail')
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, 'user/edit_profile.html', {'form': form})
 
 
 class BaseView(TemplateView):
@@ -211,11 +245,19 @@ class TVListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        # Kontrola, zda uživatel patří do skupiny 'tv_admin', pokud je přihlášen (pro podminkovani v html)
+        # Kontrola, zda uživatel patří do skupiny 'tv_admin'
         context['is_tv_admin'] = user.groups.filter(name='tv_admin').exists()
+
+        # Předání vybraných filtrů do kontextu
         context['selected_brand'] = self.request.GET.getlist('brand')
         context['selected_technology'] = self.request.GET.getlist('technology')
         context['selected_resolution'] = self.request.GET.getlist('resolution')
+
+        # Pro každou televizi přidáme odpovídající položku zásob
+        televisions = context['object_list']
+        for television in televisions:
+            item_on_stock = ItemsOnStock.objects.filter(television_id=television.id).first()
+            television.item_on_stock = item_on_stock
         return context
 
 
@@ -311,10 +353,16 @@ class FilteredTelevisionListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Pridej aktualni filtry do kontextu (napr. pro zobrazeni v sablone)
-        context['selected_smart'] = self.kwargs.get('smart', 'All')
+        context['selected_smart'] = self.kwargs.get('smart_tv', 'All')
         context['selected_resolution'] = self.kwargs.get('resolution', 'All')
         context['selected_technology'] = self.kwargs.get('technology', 'All')
         context['selected_op_system'] = self.kwargs.get('op_system', 'All')
+
+        # Pro každou televizi přidáme odpovídající položku zásob
+        televisions = context['object_list']
+        for television in televisions:
+            item_on_stock = ItemsOnStock.objects.filter(television_id=television.id).first()
+            television.item_on_stock = item_on_stock
         return context
 
 
@@ -363,38 +411,6 @@ class ItemOnStockDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
     def test_func(self):
         return self.request.user.is_superuser or self.request.user.groups.filter(name='stock_admin').exists()
 
-@login_required
-def edit_profile(request):
-    profile = Profile.objects.get(user=request.user)
-
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            return redirect('profile_detail')
-    else:
-        form = ProfileForm(instance=profile)
-
-    return render(request, 'user/edit_profile.html', {'form': form})
-
-
-def signup(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)  # Automatically log the user in after registration
-            return redirect('home')
-    else:
-        form = SignUpForm()
-    return render(request, 'user/signup.html', {'form': form})
-
-
-class MobileListView(ListView):
-    template_name = 'mobile_list.html'
-    model = MobilePhone
-    context_object_name = 'object_list'
-
 
 class AddToCartView(LoginRequiredMixin, View):
     def get(self, request, television_id):
@@ -437,12 +453,7 @@ class AddToCartView(LoginRequiredMixin, View):
 
         # Ulozime kosik do session
         request.session['cart'] = cart
-
-        # Kontrola, zda pridavame z kosiku nebo ze stranky televize
-        if 'from_cart' in request.GET:
-            return redirect('view_cart')
-        else:
-            return redirect('tv_detail', pk=television_id)
+        return redirect('view_cart')
 
 
 class RemoveFromCartView(LoginRequiredMixin, View):
@@ -483,11 +494,10 @@ class CheckoutView(LoginRequiredMixin, FormView):
     template_name = 'order/checkout.html'
     form_class = OrderForm
 
+    # def __init__(self, **kwargs):
+    #     super().__init__(kwargs)
+    #     self.order = None
     """Přesměrování, pokud je košík prázdný"""
-
-    def __init__(self, **kwargs):
-        super().__init__(kwargs)
-        self.order = None
 
     def dispatch(self, request, *args, **kwargs):
         cart = self.request.session.get('cart', {})
@@ -496,12 +506,14 @@ class CheckoutView(LoginRequiredMixin, FormView):
         return super().dispatch(request, *args, **kwargs)
 
     """Úspěšné přesměrování po odeslání formuláře"""
+
     def get_success_url(self):
         return reverse('order_success', kwargs={'order_id': self.order.order_id})
 
     """
     Inicializace formuláře s údaji uživatele
     """
+
     def get_initial(self):
         initial = super().get_initial()
         user = self.request.user
@@ -526,12 +538,10 @@ class CheckoutView(LoginRequiredMixin, FormView):
     """Logika po úspěšném odeslání formuláře (zpracování objednávky)"""
 
     def form_valid(self, form):
-        """ Vytvoření objednávky, ale zatím neuložíme """
-        self.order = form.save(commit=False)
+        self.order = form.save(commit=False)  # Vytvoření objednávky, ale zatím neuložíme
         self.order.user = self.request.user  # Priradime uzivatele k objednávce
         self.order.price = 0  # Inicializace celkové ceny na 0
-        # Nejprve ulozime objednavku
-        self.order.save()
+        self.order.save()  # Nejprve ulozime objednavku
 
         """ Zpracování položek z košíku """
         cart = self.request.session.get('cart', {})
@@ -541,48 +551,29 @@ class CheckoutView(LoginRequiredMixin, FormView):
             count = item['quantity']  # Získání počtu z košíku
             television = Television.objects.get(id=television_id)
 
-            for _ in range(count):  # Přidání televize do objednávky podle počtu
-                self.order.television.add(television)
-                total_price += television.price  # Přičtení ceny
+            # Najdeme odpovídající záznam v ItemsOnStock
+            stock_item = ItemsOnStock.objects.get(television_id=television)
+
+            # Zkontrolujeme, zda je na skladě dostatečné množství
+            if stock_item.quantity < count:
+                form.add_error(None, f'Not enough stock for {television.brand_model}.')
+                return self.form_invalid(form)
+
+            # Odečteme počet kusů ze skladu
+            stock_item.quantity -= count
+            stock_item.save()
+
+            # Vytvoření položky objednávky
+            order_item = OrderItem.objects.create(order=self.order, television=television, quantity=count)
+
+            total_price += television.price * count  # Přičtení ceny
 
         self.order.price = total_price
         self.order.status = 'submitted'
         self.order.save()
 
-        self.request.session['cart'] = {} # Vyčištění košíku
+        self.request.session['cart'] = {}  # Vyčištění košíku
         return super().form_valid(form)
-
-
-class CreateOrderView(LoginRequiredMixin, CreateView):
-    model = Order
-    form_class = OrderForm
-    template_name = 'order/create_order.html'
-
-    def get_televison(self):
-        # Ziskani televize podle ID predaného v URL
-        return get_object_or_404(Television, pk=self.kwargs['television_id'])
-
-    def get_form_kwargs(self):
-        # Pridani uzivatele do formulare
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
-    def form_valid(self, form):
-        # Neulozime jeste formular (commit=False) a upravime nektere jeho hodnoty
-        television = self.get_televison()
-        order = form.save(commit=False)
-        order.user = self.request.user
-        order.television = television
-        order.status = 'submitted'
-        order.save()
-        return redirect('order_success', order_id=order.order_id)
-
-    def get_context_data(self, **kwargs):
-        # Pridame TV do kontextu pro pouziti v sablone
-        context = super().get_context_data(**kwargs)
-        context['television'] = self.get_televison()
-        return context
 
 
 class OrderSuccessView(LoginRequiredMixin, DetailView):
@@ -590,7 +581,7 @@ class OrderSuccessView(LoginRequiredMixin, DetailView):
     template_name = 'order/order_success.html'
     context_object_name = 'order'
 
-    def get_object(self):
+    def get_object(self, **kwargs):
         # Ziskame objednavku podle order_id predaneho v URL
         order = get_object_or_404(Order, order_id=self.kwargs['order_id'])
 
@@ -619,7 +610,7 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
     template_name = 'order/order_detail.html'
     context_object_name = 'order'
 
-    def get_object(self):
+    def get_object(self, **kwargs):
         # Ziskame objednavku podle order_id predaneho v URL
         order = get_object_or_404(Order, order_id=self.kwargs['order_id'])
 
@@ -638,21 +629,63 @@ class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         return self.request.user.is_superuser or self.request.user.groups.filter(name='tv_admin').exists()
 
-    def get_object(self):
+    def get_object(self, **kwargs):
         # Ziskame objednavku podle order_id predaneho v URL
         return get_object_or_404(Order, order_id=self.kwargs['order_id'])
 
-from django.shortcuts import render
-from django.views.generic import TemplateView
 
 def home(request):
     return render(request, 'home.html')
 
 
-from django.shortcuts import render
-
 def terms_view(request):
     return render(request, 'terms.html')
 
+
 class TermsView(TemplateView):
     template_name = 'terms.html'
+
+
+def generate_order_pdf(request, order_id):
+    order = get_object_or_404(Order, order_id=order_id)
+
+    # Vytvoření bufferu
+    buffer = io.BytesIO()
+
+    # Vytvoření PDF objektu
+    p = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+
+    # Základní informace o objednávce
+    row = height - 50
+    p.setFont("Helvetica-Bold", 14)
+    p.drawString(100, row, "Objednávka")
+
+    p.setFont("Helvetica", 12)
+    row -= 20
+    p.drawString(100, row, f"ID objednávky: {order.order_id}")
+
+    row -= 20
+    p.drawString(100, row, f"Datum: {order.order_date.strftime('%d.%m.%Y')}")
+
+    row -= 20
+    p.drawString(100, row, f"Celková cena objednávky: {int(order.price)} CZK")
+
+    # Seznam zboží v objednávce
+    row -= 40
+    p.setFont("Helvetica-Bold", 12)
+    p.drawString(100, row, "Zboží v objednávce:")
+
+    # Vykreslení položek
+    p.setFont("Helvetica", 12)
+    for item in order.items.all():
+        row -= 20
+        p.drawString(100, row, f"{item.quantity}x {item.television}\" (Cena za 1ks: {int(item.television.price)} CZK)")
+
+    # Ukončení a uložení PDF
+    p.showPage()
+    p.save()
+
+    # Vrácení souboru jako odpovědi
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename=f"objednavka_{order.order_id}.pdf")

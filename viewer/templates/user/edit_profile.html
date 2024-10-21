@@ -1,16 +1,108 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mt-2">
-        <h2>Úprava profilu</h2>
-        <div class="mb-4"></div>
-        <form method="POST" enctype="multipart/form-data">
+    <div class="container">
+        <h2>Editovat profil</h2>
+        
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}  <!-- Renders the form fields automatically -->
-            <div class="mb-4"></div>
-            <button type="submit" class="btn btn-success">Uložit změny</button>
-        </form>
-        <button onclick="window.location.href='{% url 'profile_detail' %}'" class="btn btn-secondary">Zpátky na Profil</button>
-    </div>
+            {{ form.non_field_errors }}
 
+            <!-- Jméno -->
+            <div class="row mb-3">
+                <label for="{{ form.first_name.id_for_label }}" class="col-sm-2 col-form-label">{{ form.first_name.label }}:</label>
+                <div class="col-sm-10">
+                    {{ form.first_name.errors }}
+                    {{ form.first_name }}
+                </div>
+            </div>
+
+            <!-- Příjmění -->
+            <div class="row mb-3">
+                <label for="{{ form.last_name.id_for_label }}" class="col-sm-2 col-form-label">{{ form.last_name.label }}:</label>
+                <div class="col-sm-10">
+                    {{ form.last_name.errors }}
+                    {{ form.last_name }}
+                </div>
+            </div>
+
+            <!-- Telefon -->
+            <div class="row mb-3">
+                <label for="{{ form.phone_number.id_for_label }}" class="col-sm-2 col-form-label">{{ form.phone_number.label }}:</label>
+                <div class="col-sm-10">
+                    {{ form.phone_number.errors }}
+                    {{ form.phone_number }}
+                </div>
+            </div>
+
+            <!-- Datum narození -->
+            <div class="row mb-3">
+                <label for="{{ form.date_of_birth.id_for_label }}" class="col-sm-2 col-form-label">Datum narození:</label>
+                <div class="col-sm-10">
+                    {{ form.date_of_birth.errors }}
+                    {{ form.date_of_birth }}
+                </div>
+            </div>
+
+            <!-- Adresa -->
+            <div class="row mb-3">
+                <label for="{{ form.address.id_for_label }}" class="col-sm-2 col-form-label">{{ form.address.label }}:</label>
+                <div class="col-sm-10">
+                    {{ form.address.errors }}
+                    {{ form.address }}
+                </div>
+            </div>
+
+            <!-- Město -->
+            <div class="row mb-3">
+                <label for="{{ form.city.id_for_label }}" class="col-sm-2 col-form-label">{{ form.city.label }}:</label>
+                <div class="col-sm-10">
+                    {{ form.city.errors }}
+                    {{ form.city }}
+                </div>
+            </div>
+
+            <!-- PSČ -->
+            <div class="row mb-3">
+                <label for="{{ form.zipcode.id_for_label }}" class="col-sm-2 col-form-label">{{ form.zipcode.label }}:</label>
+                <div class="col-sm-10">
+                    {{ form.zipcode.errors }}
+                    {{ form.zipcode }}
+                </div>
+            </div>
+
+            <!-- Avatar -->
+            <div class="row mb-3">
+                <label for="{{ form.avatar.id_for_label }}" class="col-sm-2 col-form-label">{{ form.avatar.label }}:</label>
+                <div class="col-sm-10">
+                    {{ form.avatar.errors }}
+                    {{ form.avatar }}
+                    <!-- Zobrazení profilového obrázku, pokud existuje -->
+                    {% if profile.avatar %}
+                        <div class="mt-2">
+                            <img src="{{ profile.avatar.url }}" alt="Profilový obrázek" style="width: 100px; height: auto;" class="img-thumbnail">
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Komuniksční kanál -->
+            <div class="row mb-3">
+                <label for="{{ form.communication_channel.id_for_label }}" class="col-sm-2 col-form-label">{{ form.communication_channel.label }}:</label>
+                <div class="col-sm-10">
+                    {{ form.communication_channel.errors }}
+                    {{ form.communication_channel }}
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="row mb-3">
+                <div class="col-sm-10 offset-sm-2">
+                    <button type="submit" class="btn btn-primary">Uložit změny</button>
+                    <a href="{% url 'profile_detail' %}" class="btn btn-secondary">Zpět</a>
+                </div>
+            </div>
+        </form>
+    </div>
 {% endblock %}
+

@@ -150,12 +150,12 @@ class Profile(models.Model):
     ]
 
     alpha_validator = RegexValidator(
-        regex=r'^[a-zA-Z]+$',  # Povoluje pouze písmena
-        message='Povoleny jsou pouze znaky a-z nebo A-Z.'
+        regex=r'^[^\W\d_]+$',  # Povoluje pouze písmena
+        message='Povolena jsou pouze písmena.'
     )
 
     zipcode_validator = RegexValidator(
-        regex=r'^\d{5}$',  # Regex for exactly 5 digits
+        regex=r'^\d{5}$',  # Vyžaduje právě 5 číslic
         message='PSČ musí mít 5 číslic',
         code='invalid_zipcode'
     )
@@ -173,7 +173,7 @@ class Profile(models.Model):
         max_length=14,
         validators=[
             RegexValidator(regex=r'^\+?\d{9,}$',  # Volitelné "+" na začátku a vyžaduje alespoň 9 znaku,
-                           message='Nesprávný formát čísla. Povolené jsou pouze číslice a volitelně "+" na začátku.'),
+                           message='Nesprávný formát čísla.'),
         ],
         blank=True
     )
@@ -222,3 +222,9 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order #{self.order_id} by {self.user}"
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    television = models.ForeignKey(Television, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()

@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from viewer.models import Profile, Television, MobilePhone, Order, Brand, ItemsOnStock, TVDisplayTechnology, \
+from viewer.models import Profile, Television, Order, Brand, ItemsOnStock, TVDisplayTechnology, \
     TVDisplayResolution, TVOperationSystem
 
 
@@ -24,12 +24,12 @@ class CustomPasswordChangeForm(PasswordChangeForm):
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
 
-    # Overriding field labels
+    # Pole pro zadání starého anového hesla
     old_password = forms.CharField(label=_("Staré heslo"), widget=forms.PasswordInput)
     new_password1 = forms.CharField(label=_("Nové heslo"), widget=forms.PasswordInput)
     new_password2 = forms.CharField(label=_("Potvrďte nové heslo"), widget=forms.PasswordInput)
 
-    # Overriding the error messages
+    # Chybová zpráva pokud se staré a nové heslo neshodují
     def clean_new_password2(self):
         password1 = self.cleaned_data.get('new_password1')
         password2 = self.cleaned_data.get('new_password2')
@@ -44,8 +44,8 @@ class SignUpForm(UserCreationForm):
         min_length=3,
         max_length=20,
         help_text=_(
-            'Toto pole je povinné. Uživatelské jméno musí být jediněčné, obsahovat minimálně 3 a maximálně 20 znaků, '
-            'pouze písmena, číslice a @/./+/-/_ znaky.')
+            'Toto pole je povinné. Uživatelské jméno musí být jediněčné, může obsahovat 3 až 20 znaků: '
+            'písmena, číslice a @/./+/-/_ znaky.')
     )
     first_name = forms.CharField(label=_('Jméno'), required=False, )
     last_name = forms.CharField(label=_('Příjmení'), required=False, )
@@ -80,7 +80,7 @@ class SignUpForm(UserCreationForm):
         if len(username) < 3:
             raise forms.ValidationError(_('Uživatelské jméno nesmí být kratší než 3 znaky.'))
 
-        # Vlastní regulární výraz pro kontrolu platnosti uživatelského jména
+        # Regulární výraz pro kontrolu platnosti uživatelského jména
         if not re.match(r'^[\w.@+-]+$', username):
             raise forms.ValidationError(
                 _('Uživatelské jméno může obsahovat pouze písmena, číslice, a znaky @/./+/-/_.'))
@@ -91,10 +91,26 @@ class SignUpForm(UserCreationForm):
         email = self.cleaned_data.get('email')
 
         # Zkontroluje, zda je e-mail v platném formátu
-        if email and not forms.EmailField().clean(email):
-            raise forms.ValidationError(_('Zadejte prosím platný e-mail.'))
+        if email:
+            try:
+                forms.EmailField().clean(email)  # Validate using Django's built-in validation
+            except forms.ValidationError:
+                raise forms.ValidationError(_('Zadejte prosím platný e-mail.'))
 
         return email
+
+    def save(self, commit=True):
+        user = super().save(commit)
+        if commit:
+            user.save()  # Uloží uživatele
+            # Vytvoří profil
+            Profile.objects.create(
+                user=user,
+                first_name=self.cleaned_data.get('first_name'),
+                last_name=self.cleaned_data.get('last_name'),
+
+            )
+        return user
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -134,9 +150,9 @@ class TVOperationSystemForm(forms.ModelForm):
 
 class BrandDeleteForm(forms.Form):
     brand = forms.ModelChoiceField(
-        queryset=Brand.objects.all(),  # Fetch all brands for the dropdown
-        widget=forms.Select,  # Dropdown widget
-        empty_label="Select a brand"  # Display a prompt at the top
+        queryset=Brand.objects.all(),
+        widget=forms.Select,
+        empty_label="Vybrat"
     )
 
 
@@ -144,7 +160,7 @@ class TVDisplayTechnologyDeleteForm(forms.Form):
     display_technology = forms.ModelChoiceField(
         queryset=TVDisplayTechnology.objects.all(),
         widget=forms.Select,
-        empty_label="Select a display technology"
+        empty_label="Vybrat"
     )
 
 
@@ -152,7 +168,7 @@ class TVDisplayResolutionDeleteForm(forms.Form):
     display_resolution = forms.ModelChoiceField(
         queryset=TVDisplayResolution.objects.all(),
         widget=forms.Select,
-        empty_label="Select a display resolution"
+        empty_label="Vybrat"
     )
 
 
@@ -160,12 +176,7 @@ class TVOperationSystemDeleteForm(forms.Form):
     tv_system = forms.ModelChoiceField(
         queryset=TVOperationSystem.objects.all(),
         widget=forms.Select,
-        empty_label="Select an Operation System"
-    )
-class MobileForm(forms.ModelForm):
-    class Meta:
-        model = MobilePhone
-        fields = '__all__'
+        empty_label="Vybrat")
 
 
 class ItemOnStockForm(forms.ModelForm):

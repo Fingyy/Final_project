@@ -17,14 +17,14 @@
         <div>
             <span style="font-weight: bold;">Zboží v objednávce:</span>
                 <ul>
-                    {% for tv in order.television.all %}
-                        <li>{{ tv }} (Cena: {{ tv.price|floatformat:0 }} Kč) - Počet: {{ count }} </li>
+                    {% for item in order.items.all %}
+                        <li>{{ item.television }} (Cena za 1ks: {{ item.television.price|floatformat:0 }} Kč) - Počet: {{ item.quantity }} </li>
                     {% endfor %}
                 </ul>
         </div>
-    <a href="{% url 'order_list' %}" class="btn btn-outline-secondary">Zpátky na se seznam objednávek</a>
+    <a href="{% url 'order_list' %}" class="btn btn-outline-secondary">Zpět</a>
+    <a href="{% url 'order_pdf' order.order_id %}" class="btn btn-outline-info">PDF</a>
     {% if user.is_superuser %}
-{#                <a href="{% url 'tv_update' television.pk %}" class="btn btn-warning">Edit</a>#}
-                <a href="{% url 'order_delete' order_id=order.order_id  %}" class="btn btn-outline-danger">Smazat</a>
+                <a href="{% url 'order_delete' order.order_id  %}" class="btn btn-outline-danger">Smazat</a>
             {% endif %}
 {% endblock %}
