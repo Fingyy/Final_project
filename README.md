@@ -1,11 +1,5 @@
-# Final_project
-Online obchod s administrátorským panelem
-Stručný popis systému
-Součástí tohoto projektu je vytvoření aplikace, která umožní přidávat produkty do nabídky obchodu skrze administrátorský panel, umožní registraci uživatele, přihlašování do uživatelského účtu a vytváření objednávek.
-
-
-# Elektro e-shop
-Náš finální projekt se zaměřuje na eshop s elektronikou.
+# Online shop
+Online shop je webová aplikace vyvinutá pomocí Django frameworku v rámci závěrečného projektu kurzu Python. Nepřihlášení uživatelé mohou pouze prohlížet produkty, zatímco registrovaní a přihlášení uživatelé mají možnost nakupovat, spravovat své profily a prohlížet své objednávky. Aplikace zahrnuje víceúrovňovou správu: skupina tv_admin má oprávnění přidávat, mazat a upravovat produkty, skupina stock_admin pro správu skladu se stará o aktualizaci množství produktů na skladě a administrátor má kromě těchto funkcí přístup také ke všem objednávkám.
 
 
 ### Seznam úloh
