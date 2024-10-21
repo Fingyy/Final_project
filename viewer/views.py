@@ -633,18 +633,6 @@ class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return get_object_or_404(Order, order_id=self.kwargs['order_id'])
 
 
-def home(request):
-    return render(request, 'home.html')
-
-
-def terms_view(request):
-    return render(request, 'terms.html')
-
-
-class TermsView(TemplateView):
-    template_name = 'terms.html'
-
-
 def generate_order_pdf(request, order_id):
     order = get_object_or_404(Order, order_id=order_id)
 
@@ -688,3 +676,15 @@ def generate_order_pdf(request, order_id):
     # Vrácení souboru jako odpovědi
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename=f"objednavka_{order.order_id}.pdf")
+
+
+def home(request):
+    return render(request, 'home.html')
+
+
+def terms_view(request):
+    return render(request, 'terms.html')
+
+
+class TermsView(TemplateView):
+    template_name = 'terms.html'

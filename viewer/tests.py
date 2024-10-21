@@ -1,6 +1,13 @@
 from django.test import TestCase
-
 from viewer.models import Brand, Television, TVDisplayTechnology, TVDisplayResolution, TVOperationSystem
+from django.contrib.auth import get_user_model
+from .forms import CustomAuthenticationForm
+from django.urls import reverse
+from django.contrib.auth.models import User
+from .models import Brand, Television, ItemsOnStock, TVDisplayTechnology, TVDisplayResolution, TVOperationSystem
+
+User = get_user_model()
+
 
 # Ověřují, že se může úspěšně vytvořit značka
 class BrandModelTest(TestCase):
@@ -12,6 +19,7 @@ class BrandModelTest(TestCase):
         brand = Brand.objects.create(brand_name='Test Brand')
         self.assertEqual(str(brand), 'Test Brand')
 
+
 # Správně zobrazující se technologie
 class TVDisplayTechnologyModelTest(TestCase):
     def test_create_display_technology(self):
@@ -21,6 +29,7 @@ class TVDisplayTechnologyModelTest(TestCase):
     def test_display_technology_string_representation(self):
         tech = TVDisplayTechnology.objects.create(name='OLED')
         self.assertEqual(str(tech), 'OLED')
+
 
 # Kontrola modelu podle rozlišení a jeho následné řetězení
 class TVDisplayResolutionModelTest(TestCase):
@@ -32,6 +41,7 @@ class TVDisplayResolutionModelTest(TestCase):
         resolution = TVDisplayResolution.objects.create(name='1080p')
         self.assertEqual(str(resolution), '1080p')
 
+
 # Kontrola vytvoření modelu podle operačního systému a vrácení správného názvu.
 class TVOperationSystemModelTest(TestCase):
     def test_create_operation_system(self):
@@ -42,7 +52,8 @@ class TVOperationSystemModelTest(TestCase):
         os = TVOperationSystem.objects.create(name='Tizen')
         self.assertEqual(str(os), 'Tizen')
 
-# test tedy zajišťuje, že objekt televizoru je správně vytvořen a uchovává data, jak se očekává
+
+#Testuje přidání television a kdo je oprávněný
 class TelevisionModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -72,13 +83,8 @@ class TelevisionModelTest(TestCase):
         self.assertEqual(self.television.tv_screen_size, 55)
         self.assertTrue(self.television.smart_tv)
 
-from django.test import TestCase
-from django.contrib.auth import get_user_model
-from .forms import CustomAuthenticationForm
 
-User = get_user_model()
-
-# Testuje, zda v přihlašovacím formuláři funguje validace
+# Testuje, zda je formulář platný, když jsou zadány správné údaje a neplatný, když je prázdný.
 class CustomAuthenticationFormTest(TestCase):
     def setUp(self):
         # Vytvoření testovacího uživatele
@@ -99,11 +105,6 @@ class CustomAuthenticationFormTest(TestCase):
 
 
 # Test validace v košíku nelze přidat víc, než je skladem
-from django.test import TestCase
-from django.urls import reverse
-from django.contrib.auth.models import User
-from .models import Brand, Television, ItemsOnStock, TVDisplayTechnology, TVDisplayResolution, TVOperationSystem
-
 class CartViewTests(TestCase):
     def setUp(self):
         # Vytvoření značky
@@ -133,13 +134,16 @@ class CartViewTests(TestCase):
             quantity=5  # Maximální počet na skladě
         )
 
-    def create_display_technology(self):
+    @staticmethod
+    def create_display_technology():
         return TVDisplayTechnology.objects.create(name='LED', description='LED Technology')
 
-    def create_display_resolution(self):
+    @staticmethod
+    def create_display_resolution():
         return TVDisplayResolution.objects.create(name='4K')
 
-    def create_operation_system(self):
+    @staticmethod
+    def create_operation_system():
         return TVOperationSystem.objects.create(name='Android TV')
 
     def test_get_add_to_cart_exceed_stock(self):
