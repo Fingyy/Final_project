@@ -24,7 +24,51 @@ Online shop je webová aplikace vyvinutá pomocí Django frameworku v rámci zá
 - HTML, CSS, JavaScript
 
 ## Požadavky
+- python>= 3.12
+- django==4.1.1
+- pillow==10.4.0
+- reportlab==4.2.5
+- chardet==5.2.0
+- selenium~=4.25.0
 
-## Incializace
-  
+## Setup
+### 1. Klonování repozitáře:
+```
+git clone https://github.com/Fingyy/Final_project.git
+```
+### 2. Vytvoření a nastavení virtual env:
+Windows
+```
+pip install virtualenv
+python -m virtualenv venv
+.\venv\Scripts\activate
+```
+Mac
+```
+pip install virtualenv
+python -m virtualenv venv
+source venv/bin/activate
+```
+### 3. Instalace závislostí:
+```
+pip install -r requirements.txt
+```
+### 4. Nastavení databáze:
+```
+python manage.py migrate
+```
+### 5. Načítání statických souborů:
+```
+python manage.py collectstatic
+```
+### 6. Spuštění serveru:
+```
+python manage.py runserver
+```
+### 7. Přístup k aplikaci:
 
+- Otevřete webový prohlížeč a přejděte na http://localhost:8000/
+- Pro administrativní rozhraní přejděte na http://localhost:8000/admin/
+
+
+## Databázové modely a ER Diagram
