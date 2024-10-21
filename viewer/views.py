@@ -4,7 +4,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.views.generic import TemplateView, DetailView, ListView, CreateView, UpdateView, DeleteView, FormView, View
 from poetry.console.commands import self
 
-from viewer.models import Television, ItemsOnStock, Order, Profile, Brand, TVDisplayTechnology
+from viewer.models import Television, ItemsOnStock, Order, Profile, OrderItem
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth import login
@@ -453,12 +453,7 @@ class AddToCartView(LoginRequiredMixin, View):
 
         # Ulozime kosik do session
         request.session['cart'] = cart
-
-        # Kontrola, zda pridavame z kosiku nebo ze stranky televize
-        if 'from_cart' in request.GET:
-            return redirect('view_cart')
-        else:
-            return redirect('tv_detail', pk=television_id)
+        return redirect('view_cart')
 
 
 class RemoveFromCartView(LoginRequiredMixin, View):
@@ -568,9 +563,10 @@ class CheckoutView(LoginRequiredMixin, FormView):
             stock_item.quantity -= count
             stock_item.save()
 
-            for _ in range(count):  # Přidání televize do objednávky podle počtu
-                self.order.television.add(television)
-                total_price += television.price  # Přičtení ceny
+            # Vytvoření položky objednávky
+            order_item = OrderItem.objects.create(order=self.order, television=television, quantity=count)
+
+            total_price += television.price * count  # Přičtení ceny
 
         self.order.price = total_price
         self.order.status = 'submitted'
@@ -682,9 +678,9 @@ def generate_order_pdf(request, order_id):
 
     # Vykreslení položek
     p.setFont("Helvetica", 12)
-    for tv in order.television.all():
+    for item in order.items.all():
         row -= 20
-        p.drawString(100, row, f"{tv.brand} - {tv.brand_model} - {tv.tv_screen_size}\" (Cena: {int(tv.price)} CZK)")
+        p.drawString(100, row, f"{item.quantity}x {item.television}\" (Cena za 1ks: {int(item.television.price)} CZK)")
 
     # Ukončení a uložení PDF
     p.showPage()

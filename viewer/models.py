@@ -222,3 +222,9 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order #{self.order_id} by {self.user}"
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    television = models.ForeignKey(Television, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
