@@ -1,9 +1,6 @@
 import logging
-
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404
 from django.views.generic import TemplateView, DetailView, ListView, CreateView, UpdateView, DeleteView, FormView, View
-from poetry.console.commands import self
-
 from viewer.models import Television, ItemsOnStock, Order, Profile, OrderItem
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
@@ -413,7 +410,8 @@ class ItemOnStockDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
 
 
 class AddToCartView(LoginRequiredMixin, View):
-    def get(self, request, television_id):
+    @staticmethod
+    def get(request, television_id):
         # Ziskame televizi podle ID
         television = get_object_or_404(Television, id=television_id)
 
@@ -457,7 +455,8 @@ class AddToCartView(LoginRequiredMixin, View):
 
 
 class RemoveFromCartView(LoginRequiredMixin, View):
-    def post(self, request, television_id):
+    @staticmethod
+    def post(request, television_id):
         # Ziskani kosiku ze session
         cart = request.session.get('cart', {})
 
