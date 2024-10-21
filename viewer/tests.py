@@ -1,6 +1,10 @@
 from django.test import TestCase
-
 from viewer.models import Brand, Television, TVDisplayTechnology, TVDisplayResolution, TVOperationSystem
+from django.contrib.auth import get_user_model
+from .forms import CustomAuthenticationForm
+
+User = get_user_model()
+
 
 # Ověřují, že se může úspěšně vytvořit značka
 class BrandModelTest(TestCase):
@@ -12,6 +16,7 @@ class BrandModelTest(TestCase):
         brand = Brand.objects.create(brand_name='Test Brand')
         self.assertEqual(str(brand), 'Test Brand')
 
+
 # Správně zobrazují technologie
 class TVDisplayTechnologyModelTest(TestCase):
     def test_create_display_technology(self):
@@ -21,6 +26,7 @@ class TVDisplayTechnologyModelTest(TestCase):
     def test_display_technology_string_representation(self):
         tech = TVDisplayTechnology.objects.create(name='OLED')
         self.assertEqual(str(tech), 'OLED')
+
 
 # Nastavení rozlišení a jeho řetězení
 class TVDisplayResolutionModelTest(TestCase):
@@ -42,7 +48,8 @@ class TVOperationSystemModelTest(TestCase):
         os = TVOperationSystem.objects.create(name='Tizen')
         self.assertEqual(str(os), 'Tizen')
 
-#Testuje přidání television a kdo je oprávněný
+
+# Testuje přidání television a kdo je oprávněný
 class TelevisionModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -72,11 +79,6 @@ class TelevisionModelTest(TestCase):
         self.assertEqual(self.television.tv_screen_size, 55)
         self.assertTrue(self.television.smart_tv)
 
-from django.test import TestCase
-from django.contrib.auth import get_user_model
-from .forms import CustomAuthenticationForm
-
-User = get_user_model()
 
 # Testuje, zda je formulář platný, když jsou zadány správné údaje a neplatný, když je prázdný.
 class CustomAuthenticationFormTest(TestCase):

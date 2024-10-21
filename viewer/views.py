@@ -1,9 +1,6 @@
 import logging
-
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404
 from django.views.generic import TemplateView, DetailView, ListView, CreateView, UpdateView, DeleteView, FormView, View
-from poetry.console.commands import self
-
 from viewer.models import Television, ItemsOnStock, Order, Profile, OrderItem
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
@@ -413,7 +410,8 @@ class ItemOnStockDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
 
 
 class AddToCartView(LoginRequiredMixin, View):
-    def get(self, request, television_id):
+    @staticmethod
+    def get(request, television_id):
         # Ziskame televizi podle ID
         television = get_object_or_404(Television, id=television_id)
 
@@ -457,7 +455,8 @@ class AddToCartView(LoginRequiredMixin, View):
 
 
 class RemoveFromCartView(LoginRequiredMixin, View):
-    def post(self, request, television_id):
+    @staticmethod
+    def post(request, television_id):
         # Ziskani kosiku ze session
         cart = request.session.get('cart', {})
 
@@ -634,18 +633,6 @@ class OrderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return get_object_or_404(Order, order_id=self.kwargs['order_id'])
 
 
-def home(request):
-    return render(request, 'home.html')
-
-
-def terms_view(request):
-    return render(request, 'terms.html')
-
-
-class TermsView(TemplateView):
-    template_name = 'terms.html'
-
-
 def generate_order_pdf(request, order_id):
     order = get_object_or_404(Order, order_id=order_id)
 
@@ -689,3 +676,15 @@ def generate_order_pdf(request, order_id):
     # Vrácení souboru jako odpovědi
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename=f"objednavka_{order.order_id}.pdf")
+
+
+def home(request):
+    return render(request, 'home.html')
+
+
+def terms_view(request):
+    return render(request, 'terms.html')
+
+
+class TermsView(TemplateView):
+    template_name = 'terms.html'
