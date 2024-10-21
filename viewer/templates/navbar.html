@@ -12,9 +12,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.4.1/font/bootstrap-icons.min.css">
 
     <style>
-        /* Všechny odkazy v navigačním panelu budou bílé */
+        /* Barva písma v nav bar */
         .navbar-nav .nav-link {
-            color: white !important; /* Zajištění bílé barvy textu */
+            color: white !important;
         }
 
         /* Styl pro vyhledávací pole */
@@ -73,8 +73,7 @@
                     </form>
                 </div>
 
-               <!-- Kategorie vpravo --> 
-<!-- Kategorie vpravo --> 
+               <!-- Kategorie vpravo -->  
 <div class="navbar-nav ml-auto">
     {% if user.is_superuser or stock_admin %}
         <!-- Objednávky pouze pro adminy nebo stock adminy -->
@@ -103,9 +102,9 @@
 
                 </div>
             </div>
-    </nav> <!-- Zavření <nav> tagu -->
+    </nav> 
 
-    <!-- Odkazy na Bootstrap JS a jQuery -->
+    
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
