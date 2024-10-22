@@ -1,12 +1,11 @@
-from django.test import TestCase
-from viewer.models import Brand, Television, TVDisplayTechnology, TVDisplayResolution, TVOperationSystem
-from django.contrib.auth import get_user_model
 from .forms import CustomAuthenticationForm
-from django.urls import reverse
+from django.test import LiveServerTestCase
+from selenium import webdriver
+from selenium.webdriver.common.by import By
 from django.contrib.auth.models import User
+from django.test import TestCase
+from django.urls import reverse
 from .models import Brand, Television, ItemsOnStock, TVDisplayTechnology, TVDisplayResolution, TVOperationSystem
-
-User = get_user_model()
 
 
 # Ověřují, že se může úspěšně vytvořit značka
@@ -53,7 +52,7 @@ class TVOperationSystemModelTest(TestCase):
         self.assertEqual(str(os), 'Tizen')
 
 
-#Testuje přidání television a kdo je oprávněný
+# Test zajišťuje, že objekt televizoru je správně vytvořen a uchovává data, jak se očekává
 class TelevisionModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -84,7 +83,7 @@ class TelevisionModelTest(TestCase):
         self.assertTrue(self.television.smart_tv)
 
 
-# Testuje, zda je formulář platný, když jsou zadány správné údaje a neplatný, když je prázdný.
+# Testuje, zda v přihlašovacím formuláři funguje validace
 class CustomAuthenticationFormTest(TestCase):
     def setUp(self):
         # Vytvoření testovacího uživatele
@@ -163,10 +162,81 @@ class CartViewTests(TestCase):
             self.assertContains(final_response, 'Nelze přidat více než 5 ks do košíku.')  # Upravte text podle potřeby
 
         # Ověření, že množství v košíku je maximálně 5
-        cart = self.client.session.get('cart', {})
-        self.assertEqual(cart.get(str(self.television.id), {}).get('quantity'), 5)
+            cart = self.client.session.get('cart', {})
+            self.assertEqual(cart.get(str(self.television.id), {}).get('quantity'), 5)
 
 
+# Test na ověření registrace a uživatelských práv admin
+class MySeleniumAdminTests(LiveServerTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.selenium = webdriver.Chrome()  # Inicializace webového prohlížeče
+        cls.selenium.implicitly_wait(10)
+
+        # Vytvoření admina
+        cls.admin_user = User.objects.create_superuser(
+            username='admin',
+            password='admin',
+            email='admin@admin.com'
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super().tearDownClass()
+
+    def test_admin_login(self):
+        # Přihlášení jako admin
+        self.selenium.get(f'{self.live_server_url}/login/')
+
+        # Vyplnění přihlašovacího formuláře
+        self.selenium.find_element(By.NAME, 'username').send_keys('admin')
+        self.selenium.find_element(By.NAME, 'password').send_keys('admin')
+        self.selenium.find_element(By.XPATH, '//input[@type="submit"]').click()
+
+        page_source = self.selenium.page_source
+
+        # Ověření, že admin uvidí "Sklad" a "Objednávky"
+        self.assertIn("Sklad", page_source)
+        self.assertIn("Objednávky", page_source)
 
 
+# Test na ověření registrace a uživatelských práv admin
+class MySeleniumUserTests(LiveServerTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.selenium = webdriver.Chrome()  # Inicializace webového prohlížeče
+        cls.selenium.implicitly_wait(10)
 
+        cls.normal_user = User.objects.create_user(
+            username='sileniumuser',
+            password='heslouser0',
+            email='test@seznam.cz'
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super().tearDownClass()
+
+    def test_user_login(self):
+        # Přihlášení jako běžný uživatel
+        self.selenium.get(f'{self.live_server_url}/login/')
+
+        # Vyplnění přihlašovacího formuláře
+        self.selenium.find_element(By.NAME, 'username').send_keys('sileniumuser')
+        self.selenium.find_element(By.NAME, 'password').send_keys('heslouser0')
+        self.selenium.find_element(By.XPATH, '//input[@type="submit"]').click()
+
+        page_source = self.selenium.page_source
+
+        # Ověření, že uživatel uvidí sekci "Košík"
+        self.assertIn("Košík", page_source)
+
+        # Ověření, že uživatel uvidí sekci "Profil"
+        self.assertIn("Profil", page_source)
+
+        # Ověření, že uživatel uvidí sekci "Odhlásit"
+        self.assertIn("Odhlásit", page_source)
