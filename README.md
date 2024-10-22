@@ -102,4 +102,4 @@ python manage.py runserver
 - Order → Television
 
 ### ER Diagram
-![ER Diagram]![my_project_models](https://github.com/user-attachments/assets/a4663f3b-27d6-4ee6-b026-4c242278239a)
+![my_final_project_models](https://github.com/user-attachments/assets/ee6166a5-8ec0-43d8-9922-7e35bd699987)
