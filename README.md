@@ -20,8 +20,10 @@ Online shop je webová aplikace vyvinutá pomocí Django frameworku v rámci zá
 - [x] Testování
 
 ## Použité technologie
-- Django
+- Django, Python
 - HTML, CSS, JavaScript
+- SQLite
+- Selenium
 
 ## Požadavky
 - python>= 3.12
