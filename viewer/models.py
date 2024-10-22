@@ -1,10 +1,11 @@
-from django.db import models
-from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, RegexValidator
-from django.core.exceptions import ValidationError
-from django.utils import timezone
 import datetime
 import uuid
+from django.db import models
+from django.contrib.auth.models import User
+from django.core.validators import (MinValueValidator, MaxValueValidator,
+                                    MinLengthValidator, RegexValidator)
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 
 class Brand(models.Model):
@@ -65,68 +66,12 @@ class Television(models.Model):
         return f'{self.brand} -  {self.brand_model} - {self.tv_screen_size}"'
 
 
-class MobileOperationSystem(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-
-    def __str__(self):
-        return self.name
-
-
-class MobileRAM(models.Model):
-    size = models.IntegerField(null=True, blank=True, unique=True)
-
-    def __str__(self):
-        return f"{self.size} GB"
-
-
-class MobileUserMemory(models.Model):
-    size = models.IntegerField(null=True, blank=True, unique=True)
-
-    def __str__(self):
-        return f"{self.size} GB"
-
-
-class MobileConstruction(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-
-    def __str__(self):
-        return self.name
-
-
-class MobileDisplay(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-
-    def __str__(self):
-        return self.name
-
-
-class MobilePhone(models.Model):
-    brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
-    mobile_model = models.CharField(max_length=50)
-    mobile_released_year = models.IntegerField(validators=[
-        MinValueValidator(2010),
-        MaxValueValidator(datetime.date.today().year)
-    ])
-    mobile_screen_size = models.DecimalField(max_digits=2, decimal_places=2)
-    smart_phone = models.BooleanField(default=True)
-    ram = models.ForeignKey(MobileRAM, on_delete=models.CASCADE)
-    user_memory = models.ForeignKey(MobileUserMemory, on_delete=models.CASCADE)
-    construction = models.ForeignKey(MobileConstruction, on_delete=models.CASCADE)
-    display = models.ForeignKey(MobileDisplay, on_delete=models.CASCADE)
-    description = models.TextField(blank=True)
-    categories = models.ManyToManyField(Category, related_name="mobile_phone", blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], default=0.00)
-    image = models.ImageField(upload_to='mobile_phone_images/', blank=True, null=True)
-
-    def __str__(self):
-        return f'{self.brand} -  {self.mobile_model}'
-
-
 class ItemsOnStock(models.Model):
     television_id = models.ForeignKey(Television, on_delete=models.CASCADE)
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
 
     """UniqueConstraint zajistí, že do Modelu nepřidám stejnou položku 2x (je to bezpečnost na úrovni databáze)"""
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['television_id'], name='unique_television')
@@ -142,6 +87,32 @@ def validate_not_future_date(value):
 
 
 class Profile(models.Model):
+    """
+       Model profilu uživatele, který obsahuje osobní a kontaktní informace.
+
+       Tento model rozšiřuje standardní model uživatele a uchovává dodatečné informace,
+       jako jsou jméno, příjmení, telefonní číslo, datum narození, adresa a preferovaný
+       komunikační kanál. Umožňuje také nahrát profilový obrázek.
+
+       Atributy:
+           communication_channel_choices (list): Možnosti komunikačních kanálů, které si uživatel může vybrat.
+           alpha_validator (RegexValidator): Validátor pro kontrolu, zda obsahuje pouze písmena.
+           zipcode_validator (RegexValidator): Validátor pro kontrolu PSČ, které musí mít 5 číslic.
+           user (OneToOneField): Vztah k modelu User, který představuje uživatele.
+           first_name (CharField): Křestní jméno uživatele (max. 50 znaků), musí mít alespoň 2 znaky.
+           last_name (CharField): Příjmení uživatele (max. 50 znaků), musí mít alespoň 2 znaky.
+           phone_number (CharField): Telefonní číslo (max. 14 znaků), volitelné, s kontrolou formátu.
+           date_of_birth (DateField): Datum narození uživatele, volitelné, nesmí být v budoucnosti.
+           address (CharField): Adresa uživatele (max. 100 znaků), volitelná.
+           city (CharField): Město uživatele (max. 25 znaků), volitelné, s kontrolou písmen.
+           zipcode (CharField): PSČ uživatele (max. 5 znaků), volitelné, s kontrolou 5 číslic.
+           avatar (ImageField): Profilový obrázek, který se ukládá do složky 'avatars/'.
+           communication_channel (CharField): Preferovaný komunikační kanál uživatele (výchozí: 'Email').
+
+       Metody:
+           email (property): Vrací e-mailovou adresu uživatele.
+           __str__(): Vrací řetězec reprezentující profil uživatele.
+       """
 
     communication_channel_choices = [
         ('Pošta', 'Pošta'),
@@ -209,7 +180,6 @@ class Order(models.Model):
     order_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name='orders')
     television = models.ManyToManyField(Television)
-    mobile_phone = models.ManyToManyField(MobilePhone)
     order_date = models.DateTimeField(auto_now_add=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     first_name = models.CharField(max_length=30, blank=True)

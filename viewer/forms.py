@@ -93,7 +93,7 @@ class SignUpForm(UserCreationForm):
         # Zkontroluje, zda je e-mail v platném formátu
         if email:
             try:
-                forms.EmailField().clean(email)  # Validate using Django's built-in validation
+                forms.EmailField().clean(email)
             except forms.ValidationError:
                 raise forms.ValidationError(_('Zadejte prosím platný e-mail.'))
 
@@ -245,6 +245,28 @@ class OrderForm(forms.ModelForm):
 
 
 class ProfileForm(forms.ModelForm):
+    """
+        Formulář pro úpravu profilu uživatele.
+
+        Tato třída dědí z ModelForm a slouží k vytvoření a validaci formuláře pro
+        úpravu osobních údajů uživatele, jako jsou jméno, příjmení, telefonní číslo,
+        datum narození, adresa, město, PSČ, profilový obrázek a preferovaný
+        komunikační kanál.
+
+        Atributy:
+            Meta (class): Definuje metadata pro formulář.
+                model (Profile): Model, se kterým je formulář spojen (Profile).
+                fields (list): Seznam polí, která budou zahrnuta ve formuláři.
+                labels (dict): Přizpůsobené popisky pro jednotlivá pole formuláře.
+
+            avatar (ImageField): Pole pro nahrání profilového obrázku, které je
+                                 nepovinné.
+
+            date_of_birth (DateField): Pole pro zadání data narození, které je
+                                        nepovinné. Používá správný formát data
+                                        a typ input pro datum.
+
+        """
     class Meta:
         model = Profile
         fields = ['first_name', 'last_name', 'phone_number', 'date_of_birth', 'address', 'city', 'zipcode', 'avatar',

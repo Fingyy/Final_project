@@ -1,32 +1,52 @@
 import logging
-from django.http import Http404
-from django.views.generic import TemplateView, DetailView, ListView, CreateView, UpdateView, DeleteView, FormView, View
-from viewer.models import Television, ItemsOnStock, Order, Profile, OrderItem
+import io
+
+from django.http import Http404, FileResponse
+from django.views.generic import (TemplateView, DetailView, ListView, CreateView, UpdateView,
+                                  DeleteView, FormView, View)
+from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
-from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models import Q
+
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+
+from viewer.models import Television, ItemsOnStock, Order, Profile, OrderItem
 from viewer.forms import (TVForm, CustomAuthenticationForm, CustomPasswordChangeForm, ProfileForm, SignUpForm,
                           OrderForm, BrandForm, ItemOnStockForm, TVDisplayTechnologyForm, TVDisplayResolutionForm,
                           TVOperationSystemForm, BrandDeleteForm, TVDisplayTechnologyDeleteForm,
                           TVDisplayResolutionDeleteForm, TVOperationSystemDeleteForm)
-from django.contrib.auth.decorators import login_required
-from django.db.models import Q
-from django.contrib import messages
-import io
-from django.http import FileResponse
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
 
 logger = logging.getLogger(__name__)
 
 
 def signup(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
+    """
+    Zpracovává registraci nového uživatele.
+
+    Tato funkce kontroluje, zda byl odeslán POST požadavek s daty formuláře. Pokud ano,
+    vytvoří instanci registračního formuláře s daty odeslanými uživatelem. Po ověření, že
+    jsou data ve formuláři platná, je nový uživatel uložen do databáze a automaticky přihlášen.
+    Poté je uživatel přesměrován na domovskou stránku. Pokud je požadavek typu GET,
+    zobrazí prázdný registrační formulář.
+
+    Parametry:
+        request (HttpRequest): Objekt požadavku obsahující data odeslaná uživatelem.
+
+    Návratová hodnota:
+        HttpResponse: V případě POST požadavku, pokud je registrace úspěšná,
+                      přesměruje na domovskou stránku. V opačném případě nebo při GET požadavku
+                      vrátí stránku s registračním formulářem.
+    """
+    if request.method == 'POST':  # Když uživatel odešle registrační formulář, funkce vytvoří
+        form = SignUpForm(request.POST)  # instanci s daty z formuláře
         if form.is_valid():
-            user = form.save()
+            user = form.save()  # Pokud je formulář platný, uloží se uživatel do databáze
             login(request, user)  # Automaticky přihlásí uživatele po registraci
 
             return redirect('home')  # Vrácení na homepage
@@ -36,23 +56,79 @@ def signup(request):
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):
+    """
+       Pohled pro zobrazení detailů profilu přihlášeného uživatele.
+
+       Tento pohled využívá LoginRequiredMixin, aby zajistil, že pouze
+       autentizovaní uživatelé mají přístup. Vykresluje šablonu 'profile_detail.html'
+       a poskytuje informace o přihlášeném uživateli jako součást kontextu.
+
+       Atributy:
+           template_name (str): Cesta k šabloně, která se používá pro vykreslení detailů profilu.
+
+       Metody:
+           get_context_data(**kwargs): Vrací kontextová data pro šablonu, včetně
+                                       aktuálního uživatele jako 'object'.
+       """
     template_name = 'user/profile_detail.html'
 
     def get_context_data(self, **kwargs):
+        """
+                Přepisuje výchozí metodu get_context_data, aby přidala přihlášeného
+                uživatele do kontextových dat.
+
+                Argumenty:
+                    **kwargs: Další klíčové argumenty pro kontextová data.
+
+                Vrací:
+                    dict: Slovník obsahující kontextová data pro šablonu, včetně
+                          přihlášeného uživatele.
+                """
         return {**super().get_context_data(), 'object': self.request.user}
 
 
 class SubmittableLoginView(LoginView):
+    """
+    Zobrazuje a zpracovává přihlašovací formulář uživatele.
+
+    Tato třída dědí z LoginView a slouží k tomu, aby uživatelé mohli zadat své přihlašovací údaje
+    a přihlásit se. Po úspěšném přihlášení je uživatel přesměrován na domovskou stránku.
+
+    Atributy:
+        template_name (str): Cesta k šabloně, která zobrazuje přihlašovací formulář.
+        form_class (Form): Vlastní autentizační formulář používaný pro přihlášení (CustomAuthenticationForm).
+        next_page (str): Cílová stránka, na kterou bude uživatel přesměrován po úspěšném přihlášení.
+    """
     template_name = 'user/login_form.html'
     form_class = CustomAuthenticationForm
     next_page = reverse_lazy('home')
 
 
 class CustomLogoutView(LogoutView):
+    """
+      Zajišťuje odhlášení uživatele a přesměrování na domovskou stránku.
+
+      Tato třída dědí z LogoutView a slouží k tomu, aby uživatel mohl být odhlášen.
+      Po úspěšném odhlášení je uživatel automaticky přesměrován na domovskou stránku.
+
+      Atributy:
+          next_page (str): Cílová stránka, na kterou bude uživatel přesměrován po odhlášení.
+      """
     next_page = reverse_lazy('home')
 
 
 class SubmittablePasswordChangeView(PasswordChangeView):
+    """
+        Zajišťuje zobrazení a zpracování formuláře pro změnu hesla uživatele.
+
+        Tato třída dědí z PasswordChangeView a umožňuje uživateli změnit své heslo.
+        Po úspěšné změně hesla je uživatel přesměrován na stránku s detaily profilu.
+
+        Atributy:
+            template_name (str): Cesta k šabloně, která zobrazuje formulář pro změnu hesla.
+            success_url (str): Cílová stránka, na kterou bude uživatel přesměrován po úspěšné změně hesla.
+            form_class (Form): Vlastní formulář pro změnu hesla (CustomPasswordChangeForm).
+        """
     template_name = 'user/password_change_form.html'
     success_url = reverse_lazy('profile_detail')
     form_class = CustomPasswordChangeForm
@@ -60,6 +136,22 @@ class SubmittablePasswordChangeView(PasswordChangeView):
 
 @login_required
 def edit_profile(request):
+    """
+       Umožňuje přihlášenému uživateli upravit jeho profil.
+
+       Funkce zpracovává jak GET, tak POST požadavky.
+       - Při GET požadavku načte existující údaje o profilu uživatele a zobrazí formulář pro jejich úpravu.
+       - Při POST požadavku, pokud uživatel odešle upravená data, zkontroluje jejich platnost pomocí `ProfileForm`.
+         Pokud jsou data validní, změny jsou uloženy a uživatel je přesměrován na stránku s detaily profilu.
+
+       Parametry:
+           request (HttpRequest): Objekt požadavku obsahující informace o požadavku uživatele.
+
+       Návratová hodnota:
+           HttpResponse: V případě POST požadavku, pokud je editace úspěšná,
+                         přesměruje uživatele na stránku s detaily profilu.
+                         Při GET požadavku vrátí stránku s formulářem pro úpravu profilu.
+       """
     profile = Profile.objects.get(user=request.user)
 
     if request.method == 'POST':
@@ -79,11 +171,38 @@ class BaseView(TemplateView):
 
 
 class SearchResultsView(ListView):
+    """
+       Zobrazuje výsledky vyhledávání pro model Television.
+
+       Tato třída dědí z ListView a zajišťuje zobrazení seznamu výsledků vyhledávání na základě
+       zadaného dotazu (query). Uživatel může vyhledávat podle názvu značky, technologie displeje
+       nebo modelu televize. Pokud dotaz není zadán, vrací prázdný queryset.
+
+       Atributy:
+           template_name (str): Cesta k šabloně, která zobrazuje výsledky vyhledávání.
+           model (Model): Model, podle kterého se vyhledává (Television).
+           context_object_name (str): Název, pod kterým jsou výsledky vyhledávání dostupné v šabloně.
+
+       Metody:
+           get_queryset(): Získává queryset na základě vyhledávacího dotazu z GET parametrů.
+                           Pokud není dotaz zadán, vrací prázdný queryset.
+       """
+
     template_name = 'search_results.html'
     model = Television
     context_object_name = 'search_results'
 
     def get_queryset(self):
+        """
+                Získává a vrací queryset na základě vyhledávacího dotazu (query).
+
+                Dotaz se získává z GET parametrů (klíč 'q'). Vyhledává se podle názvu značky (brand_name),
+                technologie displeje (display_technology) a modelu značky (brand_model). Pokud není dotaz zadán,
+                vrací prázdný queryset.
+
+                Návratová hodnota:
+                    QuerySet: Výsledky vyhledávání nebo prázdný queryset, pokud není k dispozici žádný dotaz.
+                """
         query = self.request.GET.get('q')
         if query:
             return Television.objects.filter(
@@ -95,6 +214,25 @@ class SearchResultsView(ListView):
 
 
 class BrandCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    """
+       Zajišťuje vytváření nové značky televizoru.
+
+       Tato třída dědí z CreateView a umožňuje uživatelům, kteří jsou přihlášeni a mají
+       příslušná oprávnění, vytvářet nové značky televizorů. Po úspěšném vytvoření je uživatel
+       přesměrován na stránku pro vytvoření televizoru.
+
+       Atributy:
+           template_name (str): Cesta k šabloně, která zobrazuje formulář pro vytvoření značky.
+           form_class (Form): Formulář používaný pro vytváření nové značky (BrandForm).
+           success_url (str): Cílová stránka, na kterou bude uživatel přesměrován po úspěšném
+                              vytvoření značky.
+
+       Metody:
+           test_func(): Ověřuje, zda má uživatel právo na přístup k této stránce.
+                        Umožňuje přístup pouze superuživatelům nebo členům skupiny 'tv_admin'.
+           form_invalid(form): Zpracovává situaci, kdy uživatel poskytne neplatná data ve formuláři,
+                               zaznamenává varování a vrací standardní chování při neplatném formuláři.
+       """
     template_name = 'television/brand_create.html'
     form_class = BrandForm
     success_url = reverse_lazy('tv_create')
@@ -151,17 +289,32 @@ class OperationSystemCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateV
 
 
 class BrandDeleteView(View):
+    """
+        Zajišťuje zobrazení a zpracování formuláře pro smazání značky televizoru.
+
+        Tato třída dědí z View a poskytuje funkčnost pro smazání vybrané značky. Uživatel
+        může vybrat značku, kterou chce smazat, a po potvrzení je značka odstraněna z databáze.
+
+        Atributy:
+            template_name (str): Cesta k šabloně, která zobrazuje formulář pro smazání značky.
+
+        Metody:
+            get(request): Zpracovává GET požadavek a zobrazuje formulář pro smazání značky.
+            post(request): Zpracovává POST požadavek, ověřuje formulář a provádí smazání značky,
+                           pokud je formulář platný.
+        """
+
     template_name = 'television/brand_delete.html'
 
-    def get(self, request, *args, **kwargs):
-        form = BrandDeleteForm()  # Instantiate the form
+    def get(self, request):
+        form = BrandDeleteForm()  # Vytvoření instance formuláře
         return render(request, self.template_name, {'form': form})
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         form = BrandDeleteForm(request.POST)
         if form.is_valid():
             brand = form.cleaned_data['brand']
-            brand.delete()  # Delete the selected brand
+            brand.delete()  # Smaze vybranu znacku
             return redirect('tv_create')
         return render(request, self.template_name, {'form': form})
 
@@ -169,15 +322,15 @@ class BrandDeleteView(View):
 class TVDisplayTechnologyDeleteView(View):
     template_name = 'television/technology_delete.html'
 
-    def get(self, request, *args, **kwargs):
-        form = TVDisplayTechnologyDeleteForm()  # Instantiate the form
+    def get(self, request):
+        form = TVDisplayTechnologyDeleteForm()
         return render(request, self.template_name, {'form': form})
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         form = TVDisplayTechnologyDeleteForm(request.POST)
         if form.is_valid():
             display_technology = form.cleaned_data['display_technology']
-            display_technology.delete()  # Delete the selected brand
+            display_technology.delete()
             return redirect('tv_create')
         return render(request, self.template_name, {'form': form})
 
@@ -185,15 +338,15 @@ class TVDisplayTechnologyDeleteView(View):
 class TVDisplayResolutionDeleteView(View):
     template_name = 'television/resolution_delete.html'
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         form = TVDisplayResolutionDeleteForm()
         return render(request, self.template_name, {'form': form})
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         form = TVDisplayResolutionDeleteForm(request.POST)
         if form.is_valid():
             display_resolution = form.cleaned_data['display_resolution']
-            display_resolution.delete()  # Delete the selected brand
+            display_resolution.delete()
             return redirect('tv_create')
         return render(request, self.template_name, {'form': form})
 
@@ -201,11 +354,11 @@ class TVDisplayResolutionDeleteView(View):
 class TVOperationSystemDeleteView(View):
     template_name = 'television/system_delete.html'
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         form = TVOperationSystemDeleteForm()
         return render(request, self.template_name, {'form': form})
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         form = TVOperationSystemDeleteForm(request.POST)
         if form.is_valid():
             tv_system = form.cleaned_data['tv_system']
