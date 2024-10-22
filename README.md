@@ -66,11 +66,10 @@ python manage.py collectstatic
 python manage.py runserver
 ```
 ### 7. Přístup k aplikaci:
-```
 - Otevřete webový prohlížeč a přejděte na http://localhost:8000/
 - Pro administrativní rozhraní přejděte na http://localhost:8000/admin/
 
-```
+
 ## Databázové modely a ER Diagram
 
 ### Přehled modelů
@@ -79,8 +78,6 @@ python manage.py runserver
 - **TVDisplayTechnology, TVDisplayResolution, TVOperationSystem:** Modely pro různé vlastnosti televizorů.
 - **Category:** Kategorizuje produkty do různých skupin.
 - **Television:** Hlavní model pro televizory, včetně detailů jako velikost obrazovky, technologie displeje atd.
-- **MobileOperationSystem, MobileRAM, MobileUserMemory, MobileConstruction, MobileDisplay:** Modely pro různé vlastnosti mobilních telefonů.
-- **MobilePhone:** Hlavní model pro mobilní telefony, s atributy jako velikost obrazovky, RAM a interní paměť.
 - **ItemsOnStock:** Sleduje množství dostupných televizorů na skladě, s unikátními omezeními.
 - **Profile:** Uchovává uživatelské profily, včetně validací a volby komunikačního kanálu.
 - **Order:** Model pro objednávky, sleduje status a další detaily objednávky.
@@ -90,14 +87,9 @@ python manage.py runserver
 
 **1. OneToMany (1:N) vztahy**
 - Brand → Television
-- Brand → MobilePhone
 - TVDisplayTechnology → Television
 - TVDisplayResolution → Television
 - TVOperationSystem → Television
-- MobileRAM → MobilePhone
-- MobileUserMemory → MobilePhone
-- MobileConstruction → MobilePhone
-- MobileDisplay → MobilePhone
 - User → Profile
 - User → Order
 - Order → OrderItem
@@ -105,9 +97,7 @@ python manage.py runserver
 
 **2. ManyToMany (M:N) vztahy**
 - Television → Category
-- MobilePhone → Category
 - Order → Television
-- Order → MobilePhone
 
 ### ER Diagram
 ![ER Diagram]![my_project_models](https://github.com/user-attachments/assets/a4663f3b-27d6-4ee6-b026-4c242278239a)
